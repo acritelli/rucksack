@@ -1,7 +1,7 @@
 import prompt_toolkit
 import yaml
 from prompt_toolkit import prompt
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.completion import Completer, Completion, FuzzyCompleter
 
 def run_command(command):
   print(f"Run command called on {command}")
@@ -68,6 +68,14 @@ class MyCustomCompleter(prompt_toolkit.completion.Completer):
         except KeyError:
           pass
 
+        # If there is a from_command field in the current dictionary, then obtain the appropriate set of values
+        # TODO:
+        try:
+          command_to_execute = current_dictionary['from_command']
+          values_to_yield = ['placeholder', 'for', 'command']
+        except KeyError:
+          pass
+
       if not values_to_yield:
         values_to_yield = args_dictionary.keys()
 
@@ -76,59 +84,7 @@ class MyCustomCompleter(prompt_toolkit.completion.Completer):
           continue
         yield Completion(value, start_position=0)
 
-    # def get_completions(self, document, complete_event):
-    #   args_dictionary = None
-    #   requested_command = document.text.split()
-
-    #   current_dictionary = config
-    #   values_to_yield = config.keys()
-    #   while True:
-    #     try:
-    #       current_term = requested_command.pop(0).strip()
-    #     except IndexError:
-    #       break
-
-    #     try:
-    #       # First, check whatever dict we're currently using for the current term.
-    #       # If we have it, then it's a category, subcategory, command, etc.
-    #       current_dictionary = current_dictionary[current_term]
-    #       values_to_yield = current_dictionary.keys()
-    #     except KeyError:
-    #       # TODO: this could likely be made more efficent by setting a flag once we find a command
-    #       # If this key couldn't be found, we're dealing with one of two things:
-    #         # An argument name that isn't going to be found by looking into a nested dictionary
-    #         # An argument value, which won't be found at all
-    #       try:
-    #         # See if this current term is in the argument dictionary. If so, we can return those arg values to the user.
-    #         current_dictionary = args_dictionary[current_term]
-    #       except KeyError:
-    #         # If not, then just default to returning the argument dict to the user.
-    #         values_to_yield = args_dictionary.keys()
-    #         continue
-
-    #     # Check to see if this current dictionary has a command key
-    #     # If it does, we're inside a command and everything else is the args
-    #     try:
-    #       if not args_dictionary and current_dictionary['command']:
-    #         args_dictionary = current_dictionary
-    #     except KeyError:
-    #       pass
-
-    #     # If there is a values field in the current dictionary, then present these to the user
-    #     try:
-    #       values_to_yield = current_dictionary['values']
-    #     except KeyError:
-    #       pass
-
-    #   if not values_to_yield:
-    #     values_to_yield = args_dictionary.keys()
-
-    #   for value in values_to_yield:
-    #     if value == 'command':
-    #       continue
-    #     yield Completion(value, start_position=0)
-
-text = prompt_toolkit.prompt('> ', completer=MyCustomCompleter())
+text = prompt_toolkit.prompt('> ', completer=FuzzyCompleter(MyCustomCompleter()), complete_while_typing=False)
 
 print(text.split())
 
