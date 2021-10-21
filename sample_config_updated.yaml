@@ -1,0 +1,22 @@
+---
+system:
+  get-uptime:
+    command: "uptime"
+  tail-log:
+    command: "tail {{ log_file }} -n {{ num_lines }}"
+    log_file:
+      values:
+        - /var/log/messages
+        - /var/log/kern.log
+        - /var/log/auth.log
+    num_lines: {}
+      # argument:
+      #   type: command_output
+      #   command: "find /var/log -type f"
+apache:
+  get-ips:
+    command: "tail /var/log/apache2/access_log"
+    num_lines: {}
+nginx:
+  reload:
+    command: 'kill -HUP $(pidof nginx)'
