@@ -10,145 +10,152 @@ def run_command(command):
 def render_command():
   pass
 
-completer_dictionary = {}
+def main():
+  completer_dictionary = {}
 
-with open('./sample_config_updated.yaml', 'r') as file:
-  config = yaml.load(file, Loader=yaml.Loader)
+  with open('./sample_config_updated.yaml', 'r') as file:
+    config = yaml.load(file, Loader=yaml.Loader)
 
-print(config)
+  print(config)
 
-text = 'system tail-log log_file /var/www/html num_lines 2'
+  text = 'system tail-log log_file /var/www/html num_lines 2'
 
-class MyCustomCompleter(prompt_toolkit.completion.Completer):
+  class MyCustomCompleter(prompt_toolkit.completion.Completer):
 
-    def get_completions(self, document, complete_event):
-      args_dictionary = None
-      requested_command = document.text.split()
+      def get_completions(self, document, complete_event):
+        args_dictionary = None
+        requested_command = document.text.split()
 
-      current_dictionary = config
-      values_to_yield = config.keys()
-      while True:
-        try:
-          current_term = requested_command.pop(0).strip()
-        except IndexError:
-          break
-
-        # If we have an args_dictionary, then we've already found the command. No need to keep
-        # trying to process the config dict for subcommmands
-        if args_dictionary:
-          # If the current term is in the args dictionary and has values, present those to the user
+        current_dictionary = config
+        values_to_yield = config.keys()
+        while True:
           try:
-            current_dictionary = args_dictionary[current_term]
+            current_term = requested_command.pop(0).strip()
+          except IndexError:
+            break
+
+          # If we have an args_dictionary, then we've already found the command. No need to keep
+          # trying to process the config dict for subcommmands
+          if args_dictionary:
+            # If the current term is in the args dictionary and has values, present those to the user
+            try:
+              current_dictionary = args_dictionary[current_term]
+            except KeyError:
+              # If the current term isn't in the args dictionary, then default to giving the user
+              # the list of args
+              values_to_yield = args_dictionary.keys()
+              continue
+          else:
+            # If we don't have an args_dictionary, then we haven't found the command yet. Keep
+            # diving into the dictionary in an effort to find it.
+            try:
+              current_dictionary = current_dictionary[current_term]
+              values_to_yield = current_dictionary.keys()
+            except KeyError:
+              # The user must've given us some invalid data. Just return an empty array.
+              values_to_yield = []
+
+          # Check to see if this current dictionary has a command key
+          # If it does, we're inside a command and everything else is the args
+          try:
+            if not args_dictionary and current_dictionary['command']:
+              args_dictionary = current_dictionary
           except KeyError:
-            # If the current term isn't in the args dictionary, then default to giving the user
-            # the list of args
-            values_to_yield = args_dictionary.keys()
+            pass
+
+          # If there is a values field in the current dictionary, then present these to the user
+          try:
+            values_to_yield = current_dictionary['values']
+          except KeyError:
+            pass
+
+          # If there is a from_command field in the current dictionary, then obtain the appropriate set of values
+          # TODO:
+          try:
+            command_to_execute = current_dictionary['from_command']
+            values_to_yield = ['placeholder', 'for', 'command']
+          except KeyError:
+            pass
+
+        if not values_to_yield and args_dictionary:
+          values_to_yield = args_dictionary.keys()
+
+        for value in values_to_yield:
+          if value == 'command':
             continue
-        else:
-          # If we don't have an args_dictionary, then we haven't found the command yet. Keep
-          # diving into the dictionary in an effort to find it.
-          try:
-            current_dictionary = current_dictionary[current_term]
-            values_to_yield = current_dictionary.keys()
-          except KeyError:
-            # The user must've given us some invalid data. Just return an empty array.
-            values_to_yield = []
+          yield Completion(value, start_position=0)
 
-        # Check to see if this current dictionary has a command key
-        # If it does, we're inside a command and everything else is the args
-        try:
-          if not args_dictionary and current_dictionary['command']:
-            args_dictionary = current_dictionary
-        except KeyError:
-          pass
+  text = prompt_toolkit.prompt('> ', completer=FuzzyCompleter(MyCustomCompleter()), complete_while_typing=False)
 
-        # If there is a values field in the current dictionary, then present these to the user
-        try:
-          values_to_yield = current_dictionary['values']
-        except KeyError:
-          pass
+  print(text.split())
 
-        # If there is a from_command field in the current dictionary, then obtain the appropriate set of values
-        # TODO:
-        try:
-          command_to_execute = current_dictionary['from_command']
-          values_to_yield = ['placeholder', 'for', 'command']
-        except KeyError:
-          pass
+  requested_command = text.split()
+  current_dictionary = config
+  command_string = None
+  command_arguments = {}
 
-      if not values_to_yield:
-        values_to_yield = args_dictionary.keys()
-
-      for value in values_to_yield:
-        if value == 'command':
-          continue
-        yield Completion(value, start_position=0)
-
-text = prompt_toolkit.prompt('> ', completer=FuzzyCompleter(MyCustomCompleter()), complete_while_typing=False)
-
-print(text.split())
-
-requested_command = text.split()
-current_dictionary = config
-command_string = None
-command_arguments = {}
-
-print(requested_command)
+  print(requested_command)
 
 
-# Given a string and dictionary
-# While the string has items: pop an item off the string
-  # Can it be found in the current dictionary?
-    # Yes
-      # Is it a command string?
-        # Yes - set the command string variable
-        # No
-          # Does it have argument options? (e.g., a list etc.)
-            # Yes - Present these options to the user
-            # No - it must be an argument. Add it to the argument array/dictionary
-  # Update the current key and dictionary
-while True:
-  try:
-    current_command = requested_command.pop(0).strip()
-  except IndexError:
-    break
-
-  # Check to see if we can find the current command in the current dictionary
-  # If we can, then we are able to proceed further and see if this is a command,
-  # an argument, a category, etc.
-  if not command_string:
+  # Given a string and dictionary
+  # While the string has items: pop an item off the string
+    # Can it be found in the current dictionary?
+      # Yes
+        # Is it a command string?
+          # Yes - set the command string variable
+          # No
+            # Does it have argument options? (e.g., a list etc.)
+              # Yes - Present these options to the user
+              # No - it must be an argument. Add it to the argument array/dictionary
+    # Update the current key and dictionary
+  while True:
     try:
-      current_dictionary = current_dictionary[current_command]
-    except KeyError:
-      # TODO: This should probably be an error
-      pass
+      current_command = requested_command.pop(0).strip()
+    except IndexError:
+      break
 
-  # Check to see if the current dictionary has a "command" key.
-  # If it does, then this is a command string
-  try:
+    # Check to see if we can find the current command in the current dictionary
+    # If we can, then we are able to proceed further and see if this is a command,
+    # an argument, a category, etc.
     if not command_string:
-      command_string = current_dictionary['command']
-      continue
-  except KeyError:
-    pass
+      try:
+        current_dictionary = current_dictionary[current_command]
+      except KeyError:
+        # TODO: This should probably be an error
+        pass
 
-  # If we have found a command string, then remaining keys must be the argument
-  if command_string:
+    # Check to see if the current dictionary has a "command" key.
+    # If it does, then this is a command string
     try:
-      print(f"Searching for {current_command} in {current_dictionary.keys()}")
-      # First, make sure we can actually find this argument defined for the command
-      # If we find it, then we pop off the next key (the actual argument) and store it
-      # in the dictionary
-      if current_command in current_dictionary.keys():
-        command_arguments[current_command] = requested_command.pop(0).strip()
-      else:
+      if not command_string:
+        command_string = current_dictionary['command']
         continue
     except KeyError:
-      # TODO: probably throw some type of error
       pass
 
+    # If we have found a command string, then remaining keys must be the argument
+    if command_string:
+      try:
+        print(f"Searching for {current_command} in {current_dictionary.keys()}")
+        # First, make sure we can actually find this argument defined for the command
+        # If we find it, then we pop off the next key (the actual argument) and store it
+        # in the dictionary
+        if current_command in current_dictionary.keys():
+          command_arguments[current_command] = requested_command.pop(0).strip()
+        else:
+          continue
+      except KeyError:
+        # TODO: probably throw some type of error
+        pass
 
-print(command_string)
-print(command_arguments)
 
-quit()
+  print(command_string)
+  print(command_arguments)
+
+if __name__ == '__main__':
+  while True:
+    try:
+      main()
+    except (KeyboardInterrupt, EOFError):
+      print('Goodbye!')
+      quit()
