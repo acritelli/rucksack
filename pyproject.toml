@@ -10,6 +10,7 @@ PyYAML = "^5.4.1"
 prompt-toolkit = "^3.0.19"
 
 [tool.poetry.dev-dependencies]
+coverage = "^6.0.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
