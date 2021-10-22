@@ -33,6 +33,7 @@ def load_config():
   file = f"{os.getcwd()}/toolbag.yml"
   try:
     config = load_config_from_file(file)
+    return config
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
@@ -40,6 +41,7 @@ def load_config():
   file = f"{os.getcwd()}/toolbag.yaml"
   try:
     config = load_config_from_file(file)
+    return config
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
