@@ -20,20 +20,11 @@ def find_config_files_in_directory(directory=None):
   files += glob.glob(f"{directory}/*.yaml")
   return files
 
-# Config file search order
-## Skipped if the user passes a config directory or file
-## Any match halts the search process)
-### 1. Look for toolbag.[yml|yaml] in local directory
-### 2. Search ~/.config/toolbag for yaml or yml files. Load all files.
-### 3. Look for ~/.config/toolbag.[yml|yaml]
-### 4. Search /etc/toolbag for yaml or yml files. Load all files.
-def load_config():
+def load_config_from_cwd():
   config = {}
-
   file = f"{os.getcwd()}/toolbag.yml"
   try:
     config = load_config_from_file(file)
-    return config
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
@@ -41,11 +32,14 @@ def load_config():
   file = f"{os.getcwd()}/toolbag.yaml"
   try:
     config = load_config_from_file(file)
-    return config
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
 
+  return config
+
+def load_config_from_home_dir():
+  config = {}
   logger.debug(f"Searching for config files in {Path.home()}/.config/toolbag")
   files = find_config_files_in_directory(f"{Path.home()}/.config/toolbag")
   if files:
@@ -61,6 +55,25 @@ def load_config():
   else:
     logger.debug(f"No config files found in {Path.home()}/.config/toolbag")
 
+def load_config_from_etc_dir():
+  config = {}
+  logger.debug(f"Searching for config files in /etc/toolbag")
+  files = find_config_files_in_directory('/etc/toolbag')
+  if files:
+    for file in files:
+      try:
+        temp_dict = load_config_from_file(file)
+        for key in temp_dict.keys():
+          config[key] = temp_dict[key]
+      except OSError as e:
+        logger.critical(f"Unable to read config file {file}")
+        raise ConfigParserException(f"Unable to read config file {file}") from e
+    return config
+  else:
+    logger.debug(f"No config files found in /etc/toolbag")
+
+def load_config_from_etc_file():
+  config = {}
   try:
     config = load_config_from_file(f"{Path.home()}/.config/toolbag/toolbag.yml")
   except OSError:
@@ -73,20 +86,33 @@ def load_config():
     logger.debug(f"Unable to read config file {Path.home()}/.config/toolbag/toolbag.yaml")
     pass
 
-  logger.debug(f"Searching for config files in /etc/toolbag")
-  files = find_config_files_in_directory('/etc/toolbag')
-  if files:
-    for file in files:
-      try:
-        temp_dict = load_config_from_file(file)
-        for key in temp_dict.keys():
-          config[key] = temp_dict[key]
-      except OSError as e:
-        logger.critical(f"Unable to read config file {file}")
-        raise ConfigParserException(f"Unable to read config file {file}") from e
-    return
-  else:
-    logger.debug(f"No config files found in /etc/toolbag")
+  return config
+
+# Config file search order
+## Skipped if the user passes a config directory or file
+## Any match halts the search process)
+### 1. Look for toolbag.[yml|yaml] in local directory
+### 2. Search ~/.config/toolbag for yaml or yml files. Load all files.
+### 3. Look for ~/.config/toolbag.[yml|yaml]
+### 4. Search /etc/toolbag for yaml or yml files. Load all files.
+def load_config():
+  config = {}
+
+  config = load_config_from_cwd()
+  if config:
+    return config
+
+  config = load_config_from_home_dir()
+  if config:
+    return config
+
+  config = load_config_from_etc_dir()
+  if config:
+    return config
+
+  config = load_config_from_etc_file()
+  if config:
+    return config
 
 def validate_config(config):
   # Reserve "config" top level for special use
@@ -100,6 +126,3 @@ def get_config():
   config = load_config()
   validate_config(config)
   return config
-
-if __name__ == '__main__':
-  get_config()
