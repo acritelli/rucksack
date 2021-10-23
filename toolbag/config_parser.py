@@ -118,7 +118,6 @@ def validate_config(config):
   # Reserve "config" top level for special use
   if 'config' in config.keys():
     raise ConfigParserException('"config" cannot be a top-level key in config file')
-
   # TODO: more validation would be great (e.g., ensuring a command only has valid keys, etc.)
   return True
 
