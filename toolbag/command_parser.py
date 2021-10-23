@@ -1,3 +1,4 @@
+from .config_parser import args_list_to_dictionary
 
 # Given a string and dictionary
 # While the string has items: pop an item off the string
@@ -12,12 +13,13 @@
   # Update the current key and dictionary
 def parse_command(requested_command, config):
   current_dictionary = config
+  available_args = {}
   command_arguments = {}
   command_string = None
 
   while True:
     try:
-      current_command = requested_command.pop(0).strip()
+      current_token = requested_command.pop(0).strip()
     except IndexError:
       break
 
@@ -26,7 +28,7 @@ def parse_command(requested_command, config):
     # an argument, a category, etc.
     if not command_string:
       try:
-        current_dictionary = current_dictionary[current_command]
+        current_dictionary = current_dictionary[current_token]
       except KeyError:
         # TODO: This should probably be an error
         pass
@@ -41,17 +43,18 @@ def parse_command(requested_command, config):
       pass
 
     # If we have found a command string, then remaining keys must be the argument
+    # TODO: this doesn't account for a command flag that doesn't take an argument
     if command_string:
+      available_args = args_list_to_dictionary(current_dictionary['args'])
       try:
-        print(f"Searching for {current_command} in {current_dictionary.keys()}")
         # First, make sure we can actually find this argument defined for the command
         # If we find it, then we pop off the next key (the actual argument) and store it
         # in the dictionary
-        if current_command in current_dictionary.keys():
-          command_arguments[current_command] = requested_command.pop(0).strip()
+        if current_token in available_args.keys():
+          command_arguments[current_token] = requested_command.pop(0).strip()
         else:
           continue
       except KeyError:
         # TODO: probably throw some type of error
         pass
-  return current_command
+  return f"{command_string} {command_arguments}"
