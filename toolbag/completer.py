@@ -1,5 +1,12 @@
 from prompt_toolkit.completion import Completer, Completion
 
+def args_list_to_dictionary(args_list):
+  args_dictionary = {}
+  for item in args_list:
+    arg_name = list(item.keys())[0]
+    args_dictionary[arg_name] = item[arg_name]
+  return args_dictionary
+
 class ToolbagCompleter(Completer):
 
   def __init__(self, config):
@@ -46,9 +53,10 @@ class ToolbagCompleter(Completer):
       # If it does, we're inside a command and everything else is the args
       try:
         if not args_dictionary and current_dictionary['command']:
-          args_dictionary = current_dictionary
-          self.args_dictionary = args_dictionary
+          args_dictionary = args_list_to_dictionary(current_dictionary['args'])
+          values_to_yield = args_dictionary
       except KeyError:
+        # A command may not have args
         pass
 
       # If there is a values field in the current dictionary, then present these to the user
