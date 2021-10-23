@@ -6,12 +6,15 @@ class ToolbagCompleter(Completer):
     self.config = config
 
   def get_completions(self, document, complete_event):
-    config = self.config
     args_dictionary = None
     requested_command = document.text.split()
 
-    current_dictionary = config
-    values_to_yield = config.keys()
+    # TODO: consider tracking more state at the class level to reduce duplication.
+    # Would need to reset the args dictionary if we exist the args
+    # Can do this by storing the position of where we enter the args
+
+    current_dictionary = self.config
+    values_to_yield = self.config.keys()
     while True:
       try:
         current_term = requested_command.pop(0).strip()
@@ -44,6 +47,7 @@ class ToolbagCompleter(Completer):
       try:
         if not args_dictionary and current_dictionary['command']:
           args_dictionary = current_dictionary
+          self.args_dictionary = args_dictionary
       except KeyError:
         pass
 
