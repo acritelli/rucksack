@@ -1,11 +1,5 @@
 from prompt_toolkit.completion import Completer, Completion
-
-def args_list_to_dictionary(args_list):
-  args_dictionary = {}
-  for item in args_list:
-    arg_name = list(item.keys())[0]
-    args_dictionary[arg_name] = item[arg_name]
-  return args_dictionary
+from .config_parser import args_list_to_dictionary
 
 class ToolbagCompleter(Completer):
 

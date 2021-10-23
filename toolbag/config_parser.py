@@ -9,6 +9,13 @@ from .exceptions import ConfigParserException
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+def args_list_to_dictionary(args_list):
+  args_dictionary = {}
+  for item in args_list:
+    arg_name = list(item.keys())[0]
+    args_dictionary[arg_name] = item[arg_name]
+  return args_dictionary
+
 def load_config_from_file(file=None):
   with open(file, 'r') as config_file:
     config = yaml.load(config_file, Loader=yaml.Loader)
