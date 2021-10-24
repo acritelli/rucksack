@@ -57,4 +57,7 @@ def parse_command(requested_command, config):
       except KeyError:
         # TODO: probably throw some type of error
         pass
-  return f"{command_string} {command_arguments}"
+  return {
+    'command_string': command_string,
+    'command_args': command_arguments
+  }
