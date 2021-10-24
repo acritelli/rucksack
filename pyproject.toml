@@ -8,6 +8,7 @@ authors = ["Anthony Critelli <critellia@gmail.com>"]
 python = "^3.8"
 PyYAML = "^5.4.1"
 prompt-toolkit = "^3.0.19"
+fabric = "^2.6.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "^6.0.2"
