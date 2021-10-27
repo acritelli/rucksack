@@ -51,7 +51,8 @@ def parse_command(requested_command, config):
         # If we find it, then we pop off the next key (the actual argument) and store it
         # in the dictionary
         if current_token in available_args.keys():
-          command_arguments[current_token] = requested_command.pop(0).strip()
+          command_arguments[current_token] = available_args[current_token]
+          command_arguments[current_token]['input_value'] = requested_command.pop(0).strip()
         else:
           continue
       except KeyError:
