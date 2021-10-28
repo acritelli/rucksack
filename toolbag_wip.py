@@ -1,6 +1,6 @@
+import argparse
 import prompt_toolkit
 import logging
-import yaml
 import sys
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion, FuzzyCompleter
@@ -19,11 +19,17 @@ logger.addHandler(handler)
 
 def main():
 
+  parser = argparse.ArgumentParser()
+  parser.add_argument('host')
+
+  args = parser.parse_args()
+  print(args)
+
   config = config_parser.get_config()
 
   print(config)
 
-  text = prompt_toolkit.prompt('> ', completer=FuzzyCompleter(ToolbagCompleter(config)))
+  text = prompt_toolkit.prompt(f"{args.host}> ",  completer=FuzzyCompleter(ToolbagCompleter(config)))
 
   print(text.split())
 
