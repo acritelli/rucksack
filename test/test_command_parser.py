@@ -19,7 +19,14 @@ class TestCommandParser(unittest.TestCase):
 
     expected_result = {
       'command_string': 'tail',
-      'command_args': {'log_file': {'input_value': '/var/log/messages'}, 'num_lines': {'input_value': '10'}}
+      'command_args': {'log_file': '/var/log/messages', 'num_lines': '10'},
+      'command_config': {
+        'command': 'tail',
+        'args': [
+          {'log_file': {}},
+          {'num_lines': {}}
+        ]
+      }
     }
 
     command_string = 'system tail-log log_file /var/log/messages num_lines 10'

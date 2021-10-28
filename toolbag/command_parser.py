@@ -1,3 +1,4 @@
+from jinja2 import Environment
 from .config_parser import args_list_to_dictionary
 
 # Given a string and dictionary
@@ -15,6 +16,7 @@ def parse_command(requested_command, config):
   current_dictionary = config
   available_args = {}
   command_arguments = {}
+  command_config = {}
   command_string = None
 
   while True:
@@ -37,6 +39,7 @@ def parse_command(requested_command, config):
     # If it does, then this is a command string
     try:
       if not command_string:
+        command_config = current_dictionary
         command_string = current_dictionary['command']
         continue
     except KeyError:
@@ -51,8 +54,7 @@ def parse_command(requested_command, config):
         # If we find it, then we pop off the next key (the actual argument) and store it
         # in the dictionary
         if current_token in available_args.keys():
-          command_arguments[current_token] = available_args[current_token]
-          command_arguments[current_token]['input_value'] = requested_command.pop(0).strip()
+          command_arguments[current_token] = requested_command.pop(0).strip()
         else:
           continue
       except KeyError:
@@ -60,5 +62,38 @@ def parse_command(requested_command, config):
         pass
   return {
     'command_string': command_string,
-    'command_args': command_arguments
+    'command_args': command_arguments,
+    'command_config': command_config
   }
+
+def render_command(command_dictionary):
+  
+  template_string = command_dictionary['command_string']
+
+  # For each command argument that is configured for the command, check to see if the user
+  # provided a value for it. If so, append its template to the command.
+  # We iterate over the config dict first because the order of the arguments matters.
+  try:
+    for arg in command_dictionary['command_config']['args']:
+      try:
+        # The arg name is the only key in the dictionary, so obtain it.
+        arg_name = list(arg)[0]
+        arg_value = command_dictionary['command_args'][arg_name]
+
+        # If the config has a template string for this arg, then get it. Otherwise, default
+        # to {{ argname }}
+        try:
+          arg_template_string = arg[arg_name]['arg_string']
+        except KeyError:
+          arg_template_string = '{{ ' + arg_name + ' }}'
+
+        template_string = f"{template_string} {arg_template_string}"
+      except KeyError:
+        pass
+  except KeyError:
+    # If there are no args, then there's nothing to do!
+    pass
+
+  env = Environment()
+  template = env.from_string(template_string)
+  return template.render(command_dictionary['command_args'])

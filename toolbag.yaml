@@ -9,14 +9,14 @@ system:
   tail-log:
     command: "tail"
     args:
+      - num_lines:
+         arg_string: -n {{ num_lines }}
       - log_file:
           mandatory: True
           values:
             - /var/log/messages
             - /var/log/kern.log
             - /var/log/auth.log
-      - num_lines:
-         arg_string: -n {{ num_lines }}
 apache:
   get-ips:
     command: "tail /var/log/apache2/access_log"

@@ -5,7 +5,7 @@ import sys
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion, FuzzyCompleter
 from toolbag.completer import ToolbagCompleter
-from toolbag.command_parser import parse_command
+from toolbag.command_parser import parse_command, render_command
 
 from toolbag import config_parser
 
@@ -23,26 +23,17 @@ def main():
   parser.add_argument('host')
 
   args = parser.parse_args()
-  print(args)
 
+  # TODO: read this only once.
   config = config_parser.get_config()
-
-  print(config)
 
   text = prompt_toolkit.prompt(f"{args.host}> ",  completer=FuzzyCompleter(ToolbagCompleter(config)))
 
-  print(text.split())
-
   requested_command = text.split()
-  current_dictionary = config
-  command_string = None
-  command_arguments = {}
-
-  print(requested_command)
 
   command_string = parse_command(requested_command, config)
 
-  print(f"The command string is {command_string}")
+  print(render_command(command_string))
 
 if __name__ == '__main__':
   while True:
