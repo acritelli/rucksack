@@ -6,7 +6,7 @@ import yaml
 from pathlib import Path
 from .exceptions import ConfigParserException
 
-logger = logging.getLogger()
+logger = logging.getLogger('toolbag')
 logger.setLevel(logging.DEBUG)
 
 def args_list_to_dictionary(args_list):
