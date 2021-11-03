@@ -6,10 +6,11 @@ from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion, FuzzyCompleter
 from toolbag.completer import ToolbagCompleter
 from toolbag.command_parser import parse_command, render_command
+from toolbag.connection import ToolBagConnection
 
 from toolbag import config_parser
 
-logger = logging.getLogger()
+logger = logging.getLogger('toolbag')
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.DEBUG)
@@ -24,6 +25,8 @@ def main():
 
   args = parser.parse_args()
 
+  conn = ToolBagConnection(args.host)
+
   # TODO: read this only once.
   config = config_parser.get_config()
 
@@ -32,8 +35,9 @@ def main():
   requested_command = text.split()
 
   command_string = parse_command(requested_command, config)
+  print(command_string)
 
-  print(render_command(command_string))
+  print(conn.execute_command(render_command(command_string)))
 
 if __name__ == '__main__':
   while True:
