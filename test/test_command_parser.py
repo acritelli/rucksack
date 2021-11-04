@@ -47,4 +47,8 @@ class TestCommandParser(unittest.TestCase):
     command_dictionary = {'command_string': 'uptime', 'command_args': {}, 'command_config': {'command': 'uptime'}}
     check_mandatory_args(command_dictionary)
 
+  def test_check_special_command(self):
+    command = ['quit', 'whatever']
+    self.assertRaises(UserWantsToQuitException, check_special_command, command)
+
 

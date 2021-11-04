@@ -1,6 +1,6 @@
 from jinja2 import Environment
 from .config_parser import args_list_to_dictionary
-from .exceptions import MandatoryArgumentMissingException
+from .exceptions import MandatoryArgumentMissingException, UserWantsToQuitException
 
 # Given a string and dictionary
 # While the string has items: pop an item off the string
@@ -19,6 +19,9 @@ def parse_command(requested_command, config):
   command_arguments = {}
   command_config = {}
   command_string = None
+
+  # Check to see if the user entered a "special" token
+  check_special_command(requested_command)
 
   while True:
     try:
@@ -66,6 +69,11 @@ def parse_command(requested_command, config):
     'command_args': command_arguments,
     'command_config': command_config
   }
+
+def check_special_command(requested_command):
+  token = requested_command[0].strip()
+  if token == "quit":
+    raise UserWantsToQuitException
 
 def check_mandatory_args(command_dictionary):
 

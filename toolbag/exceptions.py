@@ -3,3 +3,6 @@ class ConfigParserException(Exception):
 
 class MandatoryArgumentMissingException(Exception):
   pass
+
+class UserWantsToQuitException(Exception):
+  pass

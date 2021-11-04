@@ -9,6 +9,7 @@ from toolbag.command_parser import parse_command, render_command
 from toolbag.connection import ToolBagConnection
 
 from toolbag import config_parser
+from toolbag.exceptions import UserWantsToQuitException
 
 logger = logging.getLogger('toolbag')
 
@@ -34,10 +35,12 @@ def main():
 
   requested_command = text.split()
 
-  command_string = parse_command(requested_command, config)
-  print(command_string)
-
-  print()
+  try:
+    command_string = parse_command(requested_command, config)
+    print(command_string)
+  except UserWantsToQuitException:
+    print('Goodbye!')
+    quit()
 
   rendered_command = render_command(command_string)
   print(f"Attempting to run {rendered_command}")
