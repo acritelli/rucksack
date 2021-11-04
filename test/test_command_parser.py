@@ -2,8 +2,6 @@ import unittest
 from toolbag.command_parser import *
 from toolbag.exceptions import MandatoryArgumentMissingException
 
-# system tail-log log_file /var/log/messages num_lines 10
-
 class TestCommandParser(unittest.TestCase):
   def test_parse_command(self):
     config = {
