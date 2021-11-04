@@ -1,5 +1,6 @@
 from jinja2 import Environment
 from .config_parser import args_list_to_dictionary
+from .exceptions import MandatoryArgumentMissingException
 
 # Given a string and dictionary
 # While the string has items: pop an item off the string
@@ -66,7 +67,32 @@ def parse_command(requested_command, config):
     'command_config': command_config
   }
 
+def check_mandatory_args(command_dictionary):
+
+  # Check to see if the command should have args. If not, no need to proceed
+  try:
+    configured_args = args_list_to_dictionary(command_dictionary['command_config']['args'])
+  except KeyError:
+    return
+
+  # Iterate through all args for the command and see if any are mandatory
+  # If they are, confirm they have been provided
+  for configured_arg in configured_args:
+    try:
+      if configured_args[configured_arg]['mandatory']:
+        mandatory_arg_found = False
+        for provided_arg in command_dictionary['command_args']:
+          if provided_arg == configured_arg:
+            mandatory_arg_found = True
+
+        if not mandatory_arg_found:
+          raise MandatoryArgumentMissingException(f"The mandatory arg {configured_arg} was not provided.")
+    except KeyError:
+      pass
+
 def render_command(command_dictionary):
+
+  check_mandatory_args(command_dictionary)
   
   template_string = command_dictionary['command_string']
 
