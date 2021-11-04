@@ -37,7 +37,12 @@ def main():
   command_string = parse_command(requested_command, config)
   print(command_string)
 
-  print(conn.execute_command(render_command(command_string)))
+  print()
+
+  rendered_command = render_command(command_string)
+  print(f"Attempting to run {rendered_command}")
+
+  print(conn.execute_command(rendered_command))
 
 if __name__ == '__main__':
   while True:
