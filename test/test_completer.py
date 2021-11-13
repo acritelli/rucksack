@@ -72,4 +72,4 @@ class TestCompleter(unittest.TestCase):
     completer = ToolbagCompleter(yaml.load(mock_config, Loader=yaml.Loader))
     document = Document("test")
     yielded_completion = next(completer.get_completions(document, None))
-    self.assertEqual(yielded_completion, None)
+    self.assertEqual(yielded_completion.text, '')

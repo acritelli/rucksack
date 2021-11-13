@@ -41,7 +41,7 @@ class ToolbagCompleter(Completer):
           values_to_yield = current_dictionary.keys()
         except KeyError:
           # The user must've given us some invalid data.
-          yield
+          yield Completion("", start_position=0)
 
       # Check to see if this current dictionary has a command key
       # If it does, we're inside a command and everything else is the args
