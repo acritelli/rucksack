@@ -31,21 +31,24 @@ def main():
   # TODO: read this only once.
   config = config_parser.get_config()
 
-  text = prompt_toolkit.prompt(f"{args.host}> ",  completer=FuzzyCompleter(ToolbagCompleter(config)))
+  while True:
+    text = prompt_toolkit.prompt(f"{args.host}> ",  completer=FuzzyCompleter(ToolbagCompleter(config)))
 
-  requested_command = text.split()
+    requested_command = text.split()
 
-  try:
-    command_string = parse_command(requested_command, config)
-    print(command_string)
-  except UserWantsToQuitException:
-    print('Goodbye!')
-    quit()
+    if not requested_command:
+      continue
 
-  rendered_command = render_command(command_string)
-  print(f"Attempting to run {rendered_command}")
+    try:
+      command_string = parse_command(requested_command, config)
+      print(command_string)
+    except UserWantsToQuitException:
+      print('Goodbye!')
+      quit()
 
-  print(conn.execute_command(rendered_command))
+    rendered_command = render_command(command_string)
+    print(f"Attempting to run {rendered_command}")
+    print(conn.execute_command(rendered_command))
 
 if __name__ == '__main__':
   while True:
