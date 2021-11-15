@@ -7,6 +7,9 @@ from prompt_toolkit.completion import Completer, Completion, FuzzyCompleter
 from toolbag.completer import ToolbagCompleter
 from toolbag.command_parser import parse_command, render_command
 from toolbag.connection import ToolBagConnection
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import FormattedText
+from prompt_toolkit.styles import Style
 
 from toolbag import config_parser
 from toolbag.exceptions import UserWantsToQuitException
@@ -31,8 +34,26 @@ def main():
   # TODO: read this only once.
   config = config_parser.get_config()
 
+  parser_color = 'white'
+  command_error = False
+
   while True:
-    text = prompt_toolkit.prompt(f"{args.host}> ",  completer=FuzzyCompleter(ToolbagCompleter(config)))
+
+    if command_error:
+      parser_color = 'red'
+    else:
+      parser_color = 'white'
+
+    style = Style.from_dict({
+        'prompt': parser_color,
+    })
+
+    message = [
+        ('class:prompt', f"{args.host}> ")
+    ]
+
+
+    text = prompt_toolkit.prompt(message,  style=style, completer=FuzzyCompleter(ToolbagCompleter(config)))
 
     requested_command = text.split()
 
@@ -41,14 +62,35 @@ def main():
 
     try:
       command_string = parse_command(requested_command, config)
-      print(command_string)
     except UserWantsToQuitException:
       print('Goodbye!')
       quit()
 
-    rendered_command = render_command(command_string)
-    print(f"Attempting to run {rendered_command}")
-    print(conn.execute_command(rendered_command))
+    if command_string['command_string']:
+      rendered_command = render_command(command_string)
+    else:
+      text = FormattedText([
+          ('red', 'No such command'),
+      ])
+
+      print_formatted_text(text)
+      continue
+    # print(f"Attempting to run {rendered_command}")
+    result = conn.execute_command(rendered_command)
+
+    if result.stderr:
+      command_error = True
+    else:
+      command_error = False
+
+
+    text = FormattedText([
+        ('green', result.stdout),
+        ('', '\n'),
+        ('red', result.stderr),
+    ])
+
+    print_formatted_text(text)
 
 if __name__ == '__main__':
   while True:
