@@ -2,11 +2,11 @@
 system:
   get-uptime:
     command: "uptime"
-  view-boot-log:
+  view-auth-log:
     command: "cat"
     args:
       - log:
-          from_command: "find /var/log -name boot.log*"
+          from_command: "find /var/log -name '*auth.log*' | grep -v '.gz'"
   tail-log:
     command: "tail"
     args:

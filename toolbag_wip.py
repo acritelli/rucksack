@@ -53,7 +53,7 @@ def main():
     ]
 
 
-    text = prompt_toolkit.prompt(message,  style=style, completer=FuzzyCompleter(ToolbagCompleter(config)))
+    text = prompt_toolkit.prompt(message,  style=style, completer=FuzzyCompleter(ToolbagCompleter(config, conn)))
 
     requested_command = text.split()
 

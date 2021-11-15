@@ -3,8 +3,14 @@ from .config_parser import args_list_to_dictionary
 
 class ToolbagCompleter(Completer):
 
-  def __init__(self, config):
+  def __init__(self, config, connection):
     self.config = config
+    self.connection = connection
+
+  def get_args_from_command(self, command):
+    # TODO: handle errors
+    result = self.connection.execute_command(command)
+    return result.stdout.splitlines()
 
   def get_completions(self, document, complete_event):
     args_dictionary = None
@@ -63,7 +69,7 @@ class ToolbagCompleter(Completer):
       # TODO:
       try:
         command_to_execute = current_dictionary['from_command']
-        values_to_yield = ['placeholder', 'for', 'command']
+        values_to_yield = self.get_args_from_command(command_to_execute)
       except KeyError:
         pass
 
