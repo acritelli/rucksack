@@ -3,9 +3,10 @@ system:
   get-uptime:
     command: "uptime"
   view-boot-log:
-    command: "cat {{ log }}"
-    log:
-      from_command: "find /var/log -name boot.log*"
+    command: "cat"
+    args:
+      - log:
+          from_command: "find /var/log -name boot.log*"
   tail-log:
     command: "tail"
     args:
