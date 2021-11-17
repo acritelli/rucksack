@@ -118,10 +118,9 @@ def render_command(command_dictionary):
         # to {{ argname }}
         try:
           arg_template_string = arg[arg_name]['arg_string']
+          template_string = f"{template_string} {arg_template_string}"
         except KeyError:
-          arg_template_string = '{{ ' + arg_name + ' }}'
-
-        template_string = f"{template_string} {arg_template_string}"
+          pass
       except KeyError:
         pass
   except KeyError:
