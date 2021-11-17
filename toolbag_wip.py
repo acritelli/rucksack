@@ -12,7 +12,7 @@ from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
 
 from toolbag import config_parser
-from toolbag.exceptions import UserWantsToQuitException
+from toolbag.exceptions import UserWantsToQuitException, MandatoryArgumentMissingException
 
 logger = logging.getLogger('toolbag')
 
@@ -67,7 +67,14 @@ def main():
       quit()
 
     if command_string['command_string']:
-      rendered_command = render_command(command_string)
+      try:
+        rendered_command = render_command(command_string)
+      except MandatoryArgumentMissingException as e:
+        text = FormattedText([
+            ('red', str(e)),
+        ])
+        print_formatted_text(text)
+        continue
     else:
       text = FormattedText([
           ('red', 'No such command'),
@@ -75,7 +82,7 @@ def main():
 
       print_formatted_text(text)
       continue
-    # print(f"Attempting to run {rendered_command}")
+    print(f"Attempting to run {rendered_command}")
     result = conn.execute_command(rendered_command)
 
     if result.stderr:
