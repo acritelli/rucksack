@@ -36,7 +36,6 @@ def parse_command(requested_command, config):
       try:
         current_dictionary = current_dictionary[current_token]
       except KeyError:
-        # TODO: This should probably be an error
         pass
 
     # Check to see if the current dictionary has a "command" key.
