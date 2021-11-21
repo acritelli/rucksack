@@ -12,7 +12,7 @@ from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
 
 from toolbag import config_parser
-from toolbag.exceptions import UserWantsToQuitException, MandatoryArgumentMissingException
+from toolbag.exceptions import UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
 
 logger = logging.getLogger('toolbag')
 
@@ -62,6 +62,12 @@ def main():
 
     try:
       command_string = parse_command(requested_command, config)
+    except UnknownArgumentException as e:
+        text = FormattedText([
+            ('red', str(e)),
+        ])
+        print_formatted_text(text)
+        continue 
     except UserWantsToQuitException:
       print('Goodbye!')
       quit()

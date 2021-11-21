@@ -1,6 +1,6 @@
 from jinja2 import Environment
 from .config_parser import args_list_to_dictionary
-from .exceptions import MandatoryArgumentMissingException, UserWantsToQuitException
+from .exceptions import MandatoryArgumentMissingException, UnknownArgumentException, UserWantsToQuitException
 
 # Given a string and dictionary
 # While the string has items: pop an item off the string
@@ -51,7 +51,11 @@ def parse_command(requested_command, config):
     # If we have found a command string, then remaining keys must be the argument
     # TODO: this doesn't account for a command flag that doesn't take an argument
     if command_string:
-      available_args = args_list_to_dictionary(current_dictionary['args'])
+      try:
+        available_args = args_list_to_dictionary(current_dictionary['args'])
+      except KeyError:
+        # TODO: Throw exception if an arg is provided but there are no args
+        pass
       try:
         # First, make sure we can actually find this argument defined for the command
         # If we find it, then we pop off the next key (the actual argument) and store it
@@ -59,9 +63,10 @@ def parse_command(requested_command, config):
         if current_token in available_args.keys():
           command_arguments[current_token] = requested_command.pop(0).strip()
         else:
+          raise UnknownArgumentException(f"Unkown argument: {current_token}")
           continue
       except KeyError:
-        # TODO: probably throw some type of error
+        print('arg not found')
         pass
   return {
     'command_string': command_string,

@@ -6,3 +6,6 @@ class MandatoryArgumentMissingException(Exception):
 
 class UserWantsToQuitException(Exception):
   pass
+
+class UnknownArgumentException(Exception):
+  pass
