@@ -1,7 +1,7 @@
 from prompt_toolkit.completion import Completer, Completion
 from .config_parser import args_list_to_dictionary
 
-class ToolbagCompleter(Completer):
+class RucksackCompleter(Completer):
 
   def __init__(self, config, connection):
     self.config = config

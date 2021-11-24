@@ -4,17 +4,17 @@ import logging
 import sys
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion, FuzzyCompleter
-from toolbag.completer import ToolbagCompleter
-from toolbag.command_parser import parse_command, render_command
-from toolbag.connection import ToolBagConnection
+from rucksack.completer import RucksackCompleter
+from rucksack.command_parser import parse_command, render_command
+from rucksack.connection import RucksackConnection
 from prompt_toolkit import print_formatted_text
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
 
-from toolbag import config_parser
-from toolbag.exceptions import UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
+from rucksack import config_parser
+from rucksack.exceptions import UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
 
-logger = logging.getLogger('toolbag')
+logger = logging.getLogger('rucksack')
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.DEBUG)
@@ -29,7 +29,7 @@ def main():
 
   args = parser.parse_args()
 
-  conn = ToolBagConnection(args.host)
+  conn = RucksackConnection(args.host)
 
   # TODO: read this only once.
   config = config_parser.get_config()
@@ -53,7 +53,7 @@ def main():
     ]
 
 
-    text = prompt_toolkit.prompt(message,  style=style, completer=FuzzyCompleter(ToolbagCompleter(config, conn)))
+    text = prompt_toolkit.prompt(message,  style=style, completer=FuzzyCompleter(RucksackCompleter(config, conn)))
 
     requested_command = text.split()
 

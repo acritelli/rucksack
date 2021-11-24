@@ -4,7 +4,7 @@ from unittest import mock
 from unittest.case import expectedFailure
 import yaml
 from pathlib import Path
-from toolbag.config_parser import *
+from rucksack.config_parser import *
 from unittest.mock import patch, mock_open
 
 mock_config = """
@@ -24,10 +24,10 @@ def load_config_from_file_cwd(file):
   return yaml.safe_load(mock_config)
 
 def mock_find_config_files_in_directory(directory):
-  if directory == f"{Path.home()}/.config/toolbag":
-    return [f"{Path.home()}/.config/toolbag/file1.yml", f"{Path.home()}/.config/toolbag/file2.yaml"]
-  elif directory == '/etc/toolbag':
-    return ['/etc/toolbag/file1.yml', '/etc/toolbag/file2.yaml']
+  if directory == f"{Path.home()}/.config/rucksack":
+    return [f"{Path.home()}/.config/rucksack/file1.yml", f"{Path.home()}/.config/rucksack/file2.yaml"]
+  elif directory == '/etc/rucksack':
+    return ['/etc/rucksack/file1.yml', '/etc/rucksack/file2.yaml']
 
 def mock_return_config(file=None):
   return yaml.safe_load(mock_config)
@@ -49,51 +49,51 @@ class TestConfigParser(unittest.TestCase):
     files = find_config_files_in_directory('fake')
     self.assertEqual(files, ['file1.yml', 'file2.yaml'])
 
-  @patch('toolbag.config_parser.load_config_from_file', load_config_from_file_cwd)
+  @patch('rucksack.config_parser.load_config_from_file', load_config_from_file_cwd)
   def test_load_config_cwd(self):
     config = load_config_from_cwd()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
-  @patch('toolbag.config_parser.find_config_files_in_directory', mock_find_config_files_in_directory)
-  @patch('toolbag.config_parser.load_config_from_file', load_config_from_file_cwd)
+  @patch('rucksack.config_parser.find_config_files_in_directory', mock_find_config_files_in_directory)
+  @patch('rucksack.config_parser.load_config_from_file', load_config_from_file_cwd)
   def test_load_config_from_home_dir(self):
     config = load_config_from_home_dir()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
-  @patch('toolbag.config_parser.find_config_files_in_directory', mock_find_config_files_in_directory)
-  @patch('toolbag.config_parser.load_config_from_file', load_config_from_file_cwd)
+  @patch('rucksack.config_parser.find_config_files_in_directory', mock_find_config_files_in_directory)
+  @patch('rucksack.config_parser.load_config_from_file', load_config_from_file_cwd)
   def test_load_config_from_etc_dir(self):
     config = load_config_from_etc_dir()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
-  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_config)
+  @patch('rucksack.config_parser.load_config_from_cwd', mock_return_config)
   def test_load_config_main_cwd(self):
     config = load_config()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
-  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_empty)
-  @patch('toolbag.config_parser.load_config_from_home_dir', mock_return_config)
+  @patch('rucksack.config_parser.load_config_from_cwd', mock_return_empty)
+  @patch('rucksack.config_parser.load_config_from_home_dir', mock_return_config)
   def test_load_config_main_load_config_from_home_dir(self):
     config = load_config()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
-  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_empty)
-  @patch('toolbag.config_parser.load_config_from_home_dir', mock_return_empty)
-  @patch('toolbag.config_parser.load_config_from_etc_dir', mock_return_config)
+  @patch('rucksack.config_parser.load_config_from_cwd', mock_return_empty)
+  @patch('rucksack.config_parser.load_config_from_home_dir', mock_return_empty)
+  @patch('rucksack.config_parser.load_config_from_etc_dir', mock_return_config)
   def test_load_config_main_load_config_from_etc_dir(self):
     config = load_config()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
-  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_empty)
-  @patch('toolbag.config_parser.load_config_from_home_dir', mock_return_empty)
-  @patch('toolbag.config_parser.load_config_from_etc_dir', mock_return_empty)
-  @patch('toolbag.config_parser.load_config_from_etc_file', mock_return_config)
+  @patch('rucksack.config_parser.load_config_from_cwd', mock_return_empty)
+  @patch('rucksack.config_parser.load_config_from_home_dir', mock_return_empty)
+  @patch('rucksack.config_parser.load_config_from_etc_dir', mock_return_empty)
+  @patch('rucksack.config_parser.load_config_from_etc_file', mock_return_config)
   def test_load_config_main_load_config_from_etc_file(self):
     config = load_config()
     expected_config = yaml.safe_load(mock_config)

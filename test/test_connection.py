@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from toolbag.connection import *
+from rucksack.connection import *
 
 class MockConnection():
   def __init__(self, host):
@@ -12,11 +12,11 @@ class MockConnection():
   def run(self, *args, **kwargs):
     return True
 
-@patch('toolbag.connection.Connection', MockConnection)
+@patch('rucksack.connection.Connection', MockConnection)
 class TestToolbagConnection(unittest.TestCase):
 
   def test_connection(self):
-    my_connection = ToolBagConnection("www.example.com")
+    my_connection = RucksackConnection("www.example.com")
     command_result = my_connection.execute_command("whoami")
 
     self.assertEqual(command_result, True)

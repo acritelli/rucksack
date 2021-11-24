@@ -1,6 +1,6 @@
 import unittest
-from toolbag.command_parser import *
-from toolbag.exceptions import MandatoryArgumentMissingException
+from rucksack.command_parser import *
+from rucksack.exceptions import MandatoryArgumentMissingException
 
 class TestCommandParser(unittest.TestCase):
   def test_parse_command(self):

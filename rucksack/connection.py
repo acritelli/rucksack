@@ -1,7 +1,7 @@
 from fabric import Connection
 
 
-class ToolBagConnection():
+class RucksackConnection():
   def __init__(self, host):
     self.host = host
     # TODO: handle localhost

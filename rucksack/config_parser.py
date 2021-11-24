@@ -6,7 +6,7 @@ import yaml
 from pathlib import Path
 from .exceptions import ConfigParserException
 
-logger = logging.getLogger('toolbag')
+logger = logging.getLogger('rucksack')
 logger.setLevel(logging.DEBUG)
 
 def args_list_to_dictionary(args_list):
@@ -29,14 +29,14 @@ def find_config_files_in_directory(directory=None):
 
 def load_config_from_cwd():
   config = {}
-  file = f"{os.getcwd()}/toolbag.yml"
+  file = f"{os.getcwd()}/rucksack.yml"
   try:
     config = load_config_from_file(file)
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
 
-  file = f"{os.getcwd()}/toolbag.yaml"
+  file = f"{os.getcwd()}/rucksack.yaml"
   try:
     config = load_config_from_file(file)
   except OSError:
@@ -47,8 +47,8 @@ def load_config_from_cwd():
 
 def load_config_from_home_dir():
   config = {}
-  logger.debug(f"Searching for config files in {Path.home()}/.config/toolbag")
-  files = find_config_files_in_directory(f"{Path.home()}/.config/toolbag")
+  logger.debug(f"Searching for config files in {Path.home()}/.config/rucksack")
+  files = find_config_files_in_directory(f"{Path.home()}/.config/rucksack")
   if files:
     for file in files:
       try:
@@ -60,12 +60,12 @@ def load_config_from_home_dir():
         raise ConfigParserException(f"Unable to read config file {file}") from e
     return config
   else:
-    logger.debug(f"No config files found in {Path.home()}/.config/toolbag")
+    logger.debug(f"No config files found in {Path.home()}/.config/rucksack")
 
 def load_config_from_etc_dir():
   config = {}
-  logger.debug(f"Searching for config files in /etc/toolbag")
-  files = find_config_files_in_directory('/etc/toolbag')
+  logger.debug(f"Searching for config files in /etc/rucksack")
+  files = find_config_files_in_directory('/etc/rucksack')
   if files:
     for file in files:
       try:
@@ -77,20 +77,20 @@ def load_config_from_etc_dir():
         raise ConfigParserException(f"Unable to read config file {file}") from e
     return config
   else:
-    logger.debug(f"No config files found in /etc/toolbag")
+    logger.debug(f"No config files found in /etc/rucksack")
 
 def load_config_from_etc_file():
   config = {}
   try:
-    config = load_config_from_file(f"{Path.home()}/.config/toolbag/toolbag.yml")
+    config = load_config_from_file(f"{Path.home()}/.config/rucksack/rucksack.yml")
   except OSError:
-    logger.debug(f"Unable to read config file {Path.home()}/.config/toolbag/toolbag.yml")
+    logger.debug(f"Unable to read config file {Path.home()}/.config/rucksack/rucksack.yml")
     pass
 
   try:
-    config = load_config_from_file(f"{Path.home()}/.config/toolbag/toolbag.yaml")
+    config = load_config_from_file(f"{Path.home()}/.config/rucksack/rucksack.yaml")
   except OSError:
-    logger.debug(f"Unable to read config file {Path.home()}/.config/toolbag/toolbag.yaml")
+    logger.debug(f"Unable to read config file {Path.home()}/.config/rucksack/rucksack.yaml")
     pass
 
   return config
@@ -98,10 +98,10 @@ def load_config_from_etc_file():
 # Config file search order
 ## Skipped if the user passes a config directory or file
 ## Any match halts the search process)
-### 1. Look for toolbag.[yml|yaml] in local directory
-### 2. Search ~/.config/toolbag for yaml or yml files. Load all files.
-### 3. Look for ~/.config/toolbag.[yml|yaml]
-### 4. Search /etc/toolbag for yaml or yml files. Load all files.
+### 1. Look for rucksack.[yml|yaml] in local directory
+### 2. Search ~/.config/rucksack for yaml or yml files. Load all files.
+### 3. Look for ~/.config/rucksack.[yml|yaml]
+### 4. Search /etc/rucksack for yaml or yml files. Load all files.
 def load_config():
   config = {}
 
