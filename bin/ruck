@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+from rucksack.cli import RucksackCli
+
+if __name__ == "__main__":
+
+  parser = ArgumentParser()
+  parser.add_argument('host')
+
+  args = parser.parse_args()
+
+  try:
+    RucksackCli(args.host).start()
+  except (KeyboardInterrupt, EOFError):
+    # TODO: really this should be caught in the above class and then propagated so that we can close down the connection
+    print('Goodbye!')
+    quit()
+

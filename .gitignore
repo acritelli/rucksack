@@ -2,3 +2,5 @@ __pycache__
 htmlcov/
 .coverage
 dist/
+ruck_test.py
+*.egg-info
