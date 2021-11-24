@@ -1,19 +1,6 @@
-[tool.poetry]
-name = "toolbag"
-version = "0.1.0"
-description = ""
-authors = ["Anthony Critelli <critellia@gmail.com>"]
-
-[tool.poetry.dependencies]
-python = "^3.8"
-PyYAML = "^5.4.1"
-prompt-toolkit = "^3.0.19"
-fabric = "^2.6.0"
-Jinja2 = "^3.0.2"
-
-[tool.poetry.dev-dependencies]
-coverage = "^6.0.2"
-
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
