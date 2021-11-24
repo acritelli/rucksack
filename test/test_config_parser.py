@@ -1,6 +1,7 @@
 import os
 import unittest
 from unittest import mock
+from unittest.case import expectedFailure
 import yaml
 from pathlib import Path
 from toolbag.config_parser import *
@@ -20,12 +21,6 @@ def mock_glob(file):
     return ['file2.yaml']
 
 def load_config_from_file_cwd(file):
-  # if file == f"{os.getcwd()}/toolbag.yml" or file == f"{os.getcwd()}/toolbag.yaml":
-  #   return yaml.safe_load(mock_config)
-  # elif file == f"{Path.home()}/.config/toolbag/file1.yml" or f"{Path.home()}/.config/toolbag/file2.yaml":
-  #   return yaml.safe_load(mock_config)
-  # elif file == '/etc/toolbag/file1.yml' or file 
-  # else:
   return yaml.safe_load(mock_config)
 
 def mock_find_config_files_in_directory(directory):
@@ -33,6 +28,12 @@ def mock_find_config_files_in_directory(directory):
     return [f"{Path.home()}/.config/toolbag/file1.yml", f"{Path.home()}/.config/toolbag/file2.yaml"]
   elif directory == '/etc/toolbag':
     return ['/etc/toolbag/file1.yml', '/etc/toolbag/file2.yaml']
+
+def mock_return_config(file=None):
+  return yaml.safe_load(mock_config)
+
+def mock_return_empty(file=None):
+  return {}
 
 
 class TestConfigParser(unittest.TestCase):
@@ -67,3 +68,45 @@ class TestConfigParser(unittest.TestCase):
     config = load_config_from_etc_dir()
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
+
+  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_config)
+  def test_load_config_main_cwd(self):
+    config = load_config()
+    expected_config = yaml.safe_load(mock_config)
+    self.assertEqual(config, expected_config)
+
+  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_empty)
+  @patch('toolbag.config_parser.load_config_from_home_dir', mock_return_config)
+  def test_load_config_main_load_config_from_home_dir(self):
+    config = load_config()
+    expected_config = yaml.safe_load(mock_config)
+    self.assertEqual(config, expected_config)
+
+  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_empty)
+  @patch('toolbag.config_parser.load_config_from_home_dir', mock_return_empty)
+  @patch('toolbag.config_parser.load_config_from_etc_dir', mock_return_config)
+  def test_load_config_main_load_config_from_etc_dir(self):
+    config = load_config()
+    expected_config = yaml.safe_load(mock_config)
+    self.assertEqual(config, expected_config)
+
+  @patch('toolbag.config_parser.load_config_from_cwd', mock_return_empty)
+  @patch('toolbag.config_parser.load_config_from_home_dir', mock_return_empty)
+  @patch('toolbag.config_parser.load_config_from_etc_dir', mock_return_empty)
+  @patch('toolbag.config_parser.load_config_from_etc_file', mock_return_config)
+  def test_load_config_main_load_config_from_etc_file(self):
+    config = load_config()
+    expected_config = yaml.safe_load(mock_config)
+    self.assertEqual(config, expected_config)
+
+  def test_validate_config(self):
+    config = {
+      'config': ""
+    }
+    self.assertRaises(ConfigParserException, validate_config, config)
+
+    config = {
+      "validCommand": ""
+    }
+    validation_result = validate_config(config)
+    self.assertEqual(validation_result, True)
