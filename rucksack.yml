@@ -1,0 +1,42 @@
+---
+system:
+  get-uptime:
+    command: uptime
+  performance:
+    get-basic-info:
+      command: "uptime && echo && free -h && echo && df -h"
+  tail-log:
+    command: "tail {{ log_file }}"
+    args:
+      - num_lines:
+         arg_string: -n {{ num_lines }}
+      - log_file:
+          mandatory: True
+          values:
+            - /var/log/syslog
+            - /var/log/kern.log
+            - /var/log/auth.log
+  disk-usage:
+    get-largest-files:
+      command: du -h -d {{ depth }} {{ directory }} 2>/dev/null | sort -hr | head -n 10
+      args:
+        - depth:
+            mandatory: True
+        - directory:
+            mandatory: True
+            values:
+              - /
+              - /home
+              - /var
+nginx:
+  check-config:
+    command: nginx -t 2>&1
+  reload:
+    command: 'sudo kill -HUP $(sudo pidof nginx)'
+  get-top-5-ips:
+    command: "sudo cat {{ log_file }} 2>/dev/null | cut -f 1 -d ' ' | sort | uniq -c | sort -hr | head -n 5"
+    args:
+      - log_file:
+          mandatory: True
+          from_command: "sudo find /var/log/nginx -name '*access.log*' | grep -v '.gz'"
+
