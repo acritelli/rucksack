@@ -1,10 +1,9 @@
 import glob
 import logging
 import os
-import sys
 import yaml
 from pathlib import Path
-from .exceptions import ConfigParserException
+from .exceptions import ConfigParserException, ConfigNotFoundException
 
 logger = logging.getLogger('rucksack')
 logger.setLevel(logging.DEBUG)
@@ -130,5 +129,7 @@ def validate_config(config):
 
 def get_config():
   config = load_config()
+  if not config:
+    raise ConfigNotFoundException("No valid configuration file found.")
   validate_config(config)
   return config

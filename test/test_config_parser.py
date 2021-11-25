@@ -110,3 +110,12 @@ class TestConfigParser(unittest.TestCase):
     }
     validation_result = validate_config(config)
     self.assertEqual(validation_result, True)
+
+  @patch('rucksack.config_parser.load_config', mock_return_config)
+  def test_get_config_config_found(self):
+    config = get_config()
+    self.assertEqual(config, yaml.safe_load(mock_config))
+
+  @patch('rucksack.config_parser.load_config', mock_return_empty)
+  def test_get_config_config_not_found(self):
+    self.assertRaises(ConfigNotFoundException, get_config)

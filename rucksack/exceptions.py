@@ -9,3 +9,6 @@ class UserWantsToQuitException(Exception):
 
 class UnknownArgumentException(Exception):
   pass
+
+class ConfigNotFoundException(Exception):
+  pass

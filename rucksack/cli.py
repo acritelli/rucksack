@@ -8,7 +8,7 @@ from rucksack.completer import RucksackCompleter
 from rucksack.command_parser import parse_command, render_command
 from rucksack.connection import RucksackConnection
 from rucksack.config_parser import get_config
-from rucksack.exceptions import UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
+from rucksack.exceptions import ConfigNotFoundException, UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
 
 
 class RucksackCli():
@@ -25,14 +25,18 @@ class RucksackCli():
     self.logger.addHandler(handler)
 
     # TODO: read this only once and accept as an arg
-    self.config = get_config()
+    try:
+      self.config = get_config()
+    except ConfigNotFoundException as e:
+      print(e)
+      quit(1)
 
     self.conn = RucksackConnection(self.host)
 
 
   # Sets the color of the command prompt based on whether or not there was an error
   # Command prompt is red on error, white otherwise
-  # TODO: would be cool to customize this via config1
+  # TODO: would be cool to customize this via config
   def set_prompt(self, command_error):
 
     if command_error:
