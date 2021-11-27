@@ -97,8 +97,12 @@ def check_mandatory_args(command_dictionary):
           if provided_arg == configured_arg:
             mandatory_arg_found = True
 
+        # If a mandatory arg is not found, see if there is a default for it
         if not mandatory_arg_found:
-          raise MandatoryArgumentMissingException(f"The mandatory arg {configured_arg} was not provided.")
+          try:
+            configured_args[configured_arg]['default']
+          except KeyError:
+            raise MandatoryArgumentMissingException(f"The mandatory arg {configured_arg} was not provided.")
     except KeyError:
       pass
 
@@ -116,15 +120,17 @@ def render_command(command_dictionary):
       try:
         # The arg name is the only key in the dictionary, so obtain it.
         arg_name = list(arg)[0]
-        arg_value = command_dictionary['command_args'][arg_name]
 
-        # If the config has a template string for this arg, then get it. Otherwise, default
-        # to {{ argname }}
         try:
-          arg_template_string = arg[arg_name]['arg_string']
-          template_string = f"{template_string} {arg_template_string}"
+          # Get the template string if the arg was provided
+          if command_dictionary['command_args'][arg_name]:
+            arg_template_string = arg[arg_name]['arg_string']
+            template_string = f"{template_string} {arg_template_string}"
+            continue
         except KeyError:
-          pass
+          # If the arg wasn't provided, then add the default to the command args dictionary
+          if arg[arg_name]['mandatory']:
+            command_dictionary['command_args'][arg_name] = arg[arg_name]['default']
       except KeyError:
         pass
   except KeyError:

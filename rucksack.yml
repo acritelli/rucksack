@@ -12,6 +12,7 @@ system:
          arg_string: -n {{ num_lines }}
       - log_file:
           mandatory: True
+          default: /var/log/syslog
           values:
             - /var/log/syslog
             - /var/log/kern.log
