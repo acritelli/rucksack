@@ -1,6 +1,6 @@
 import logging
 import sys
-from prompt_toolkit import prompt, print_formatted_text
+from prompt_toolkit import PromptSession, print_formatted_text
 from prompt_toolkit.completion import FuzzyCompleter
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
@@ -59,11 +59,13 @@ class RucksackCli():
 
   def start(self):
 
+    session = PromptSession()
+
     command_error = None
 
     while True:
 
-      text = prompt(**self.set_prompt(command_error), completer=FuzzyCompleter(RucksackCompleter(self.config, self.conn)))
+      text = session.prompt(**self.set_prompt(command_error), completer=FuzzyCompleter(RucksackCompleter(self.config, self.conn)))
 
       requested_command = text.split()
 
