@@ -15,7 +15,7 @@ class RucksackCli():
 
   def __init__(self, host):
     self.host = host
-    self.logger = logging.getLogger('rucksack')
+    self.logger = logging.getLogger(__name__)
 
     # TODO: accept as arg or config
     handler = logging.StreamHandler(sys.stdout)
@@ -24,13 +24,17 @@ class RucksackCli():
     handler.setFormatter(formatter)
     self.logger.addHandler(handler)
 
+    self.logger.debug('Creating new RucksackCLI')
+
     # TODO: read this only once and accept as an arg
     try:
+      self.logger.debug('Attempting to get configuration')
       self.config = get_config()
     except ConfigNotFoundException as e:
       print(e)
       quit(1)
 
+    self.logger.debug(f"Attempting to create a RucksackConnection to {host}")
     self.conn = RucksackConnection(self.host)
 
 
@@ -68,13 +72,17 @@ class RucksackCli():
       text = session.prompt(**self.set_prompt(command_error), completer=FuzzyCompleter(RucksackCompleter(self.config, self.conn)))
 
       requested_command = text.split()
+      self.logger.debug(f"User entered requested command f{requested_command}")
 
       if not requested_command:
+        self.logger.debug('User did not enter a command')
         continue
 
       try:
         command_string = parse_command(requested_command, self.config)
+        self.logger.debug(f"Command parsed as {command_string}")
       except UnknownArgumentException as e:
+          self.logger.debug('Command parsing failed')
           text = FormattedText([
               ('red', str(e)),
           ])
@@ -87,6 +95,7 @@ class RucksackCli():
       if command_string['command_string']:
         try:
           rendered_command = render_command(command_string)
+          self.logger.debug(f"Command rendered as: {rendered_command}")
         except MandatoryArgumentMissingException as e:
           text = FormattedText([
               ('red', str(e)),
@@ -100,8 +109,11 @@ class RucksackCli():
 
         print_formatted_text(text)
         continue
+      self.logger.info(f"Attempting to run: {rendered_command}")
       print(f"Attempting to run {rendered_command}")
       result = self.conn.execute_command(rendered_command)
+
+      self.logger.debug(f"Command result: {result}")
 
       if result.stderr:
         command_error = True
