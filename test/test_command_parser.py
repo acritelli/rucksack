@@ -49,4 +49,40 @@ class TestCommandParser(unittest.TestCase):
     command = ['quit', 'whatever']
     self.assertRaises(UserWantsToQuitException, check_special_command, command)
 
+  def test_render_command(self):
+
+    command_dictionary = {
+      'command_string': 'tail {{ log_file }}',
+      'command_args': {
+        'num_lines': '5'
+        },
+        'command_config': {
+          'command': 'tail {{ log_file }}',
+          'args': [
+            {
+              'num_lines': {
+                'arg_string': '-n {{ num_lines }}'
+                }
+            },
+            {
+              'log_file': {
+                'mandatory': True,
+                'default': '/var/log/syslog',
+                'values': ['/var/log/syslog', '/var/log/kern.log', '/var/log/auth.log']
+                }
+            }
+          ]
+        }
+      }
+
+    expected_result = 'tail /var/log/syslog -n 5'
+
+    self.assertEqual(render_command(command_dictionary), expected_result)
+
+  def test_render_command_no_args(self):
+    command_dictionary = {'command_string': 'uptime', 'command_args': {}, 'command_config': {'command': 'uptime'}}
+    expected_result = 'uptime'
+    self.assertEqual(render_command(command_dictionary), expected_result)
+
+
 
