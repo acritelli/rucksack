@@ -5,3 +5,4 @@ htmlcov/
 dist/
 ruck_test.py
 *.egg-info
+.rucksack.log

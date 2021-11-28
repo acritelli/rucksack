@@ -96,3 +96,7 @@ Need to cover:
 * Config file locations
 * Syntax
 * A tutorial to add some commands
+
+## Logging
+
+Log to a file whenever possible, especially for the completer (which will otherwise make the tool impossible to use).
