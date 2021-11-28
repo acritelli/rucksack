@@ -80,7 +80,7 @@ def parse_command(requested_command, config):
           command_arguments[current_token] = argument_value
           logger.debug(f"Adding '{argument_value}' as the value for the '{current_token}' argument")
         else:
-          logger.warn(f"Unknown argument '{current_token}'")
+          logger.warning(f"Unknown argument '{current_token}'")
       except KeyError:
         raise UnknownArgumentException(f"Unkown argument: {current_token}")
 
@@ -136,7 +136,7 @@ def check_mandatory_args(command_dictionary):
             configured_args[configured_arg]['default']
             logger.debug(f"Mandatory arg '{configured_arg}' has a default value")
           except KeyError:
-            logger.warn(f"Mandatory arg '{configured_arg}' not found in user provided args and has no default value.")
+            logger.warning(f"Mandatory arg '{configured_arg}' not found in user provided args and has no default value.")
             raise MandatoryArgumentMissingException(f"The mandatory arg {configured_arg} was not provided.")
     except KeyError:
       logger.debug(f"Arg '{configured_arg}' is not mandatory.")
