@@ -17,13 +17,6 @@ class RucksackCli():
     self.host = host
     self.logger = logging.getLogger(__name__)
 
-    # TODO: accept as arg or config
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    self.logger.addHandler(handler)
-
     self.logger.debug('Creating new RucksackCLI')
 
     # TODO: read this only once and accept as an arg
