@@ -5,32 +5,39 @@ import yaml
 from pathlib import Path
 from .exceptions import ConfigParserException, ConfigNotFoundException
 
-logger = logging.getLogger('rucksack')
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 def args_list_to_dictionary(args_list):
+  logger.debug(f"Converting arg list to dictionary: {args_list}")
   args_dictionary = {}
   for item in args_list:
     arg_name = list(item.keys())[0]
     args_dictionary[arg_name] = item[arg_name]
+  logger.debug(f"Returning arg dictionary: {args_dictionary}")
   return args_dictionary
 
 def load_config_from_file(file=None):
+  logger.debug(f"Attempting to load config from file: {file}")
   with open(file, 'r') as config_file:
     config = yaml.load(config_file, Loader=yaml.Loader)
+    logger.debug(f"Config loaded from file. Returning config: {config}")
     return config
 
 def find_config_files_in_directory(directory=None):
+  logger.debug(f"Attempting to find config files in directory {directory}")
   files = []
   files += glob.glob(f"{directory}/*.yml")
   files += glob.glob(f"{directory}/*.yaml")
+  logger.debug(f"Config files in directory: {files}")
   return files
 
 def load_config_from_cwd():
+  logger.debug('Attempting to load config file from current working directory')
   config = {}
   file = f"{os.getcwd()}/rucksack.yml"
   try:
     config = load_config_from_file(file)
+    logger.debug('Successfully loaded config file from CWD rucksack.yml')
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
@@ -38,6 +45,7 @@ def load_config_from_cwd():
   file = f"{os.getcwd()}/rucksack.yaml"
   try:
     config = load_config_from_file(file)
+    logger.debug('Successfully loaded config file from CWD rucksack.yaml')
   except OSError:
     logger.debug(f"Unable to read config file {file}")
     pass
@@ -45,10 +53,11 @@ def load_config_from_cwd():
   return config
 
 def load_config_from_home_dir():
+  logger.debug('Attempting to load config file from home directory')
   config = {}
-  logger.debug(f"Searching for config files in {Path.home()}/.config/rucksack")
   files = find_config_files_in_directory(f"{Path.home()}/.config/rucksack")
   if files:
+    logger.debug(f"Found config files in home {Path.home()}/.config/rucksack")
     for file in files:
       try:
         temp_dict = load_config_from_file(file)
@@ -62,10 +71,11 @@ def load_config_from_home_dir():
     logger.debug(f"No config files found in {Path.home()}/.config/rucksack")
 
 def load_config_from_etc_dir():
+  logger.debug('Attempting to load config file from /etc/rucksack directory')
   config = {}
-  logger.debug(f"Searching for config files in /etc/rucksack")
   files = find_config_files_in_directory('/etc/rucksack')
   if files:
+    logger.debug('Found config files in /etc/rucksack')
     for file in files:
       try:
         temp_dict = load_config_from_file(file)
