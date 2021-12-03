@@ -97,6 +97,6 @@ class RucksackCompleter(Completer):
       values_to_yield = args_dictionary.keys()
 
     for value in values_to_yield:
-      if value == 'command':
+      if value == 'command' or value == 'rucksack-config':
         continue
       yield Completion(value, start_position=0)
