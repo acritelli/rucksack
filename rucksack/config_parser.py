@@ -131,11 +131,18 @@ def load_config():
     return config
 
 def validate_config(config):
-  # Reserve "config" top level for special use
-  if 'config' in config.keys():
-    raise ConfigParserException('"config" cannot be a top-level key in config file')
+
+  if 'rucksack-config' in config.keys():
+    validate_rucksack_config(config['rucksack-config'])
+
   # TODO: more validation would be great (e.g., ensuring a command only has valid keys, etc.)
   return True
+
+def validate_rucksack_config(config):
+  allowed_keys = {'log-level', 'log-file'}
+  illegal_keys = set(config.keys()) - allowed_keys
+  if illegal_keys:
+    raise ConfigParserException(f"Illegal keys found in rucksack-config: {illegal_keys}")
 
 def get_config():
   config = load_config()

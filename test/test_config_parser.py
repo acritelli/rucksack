@@ -101,7 +101,10 @@ class TestConfigParser(unittest.TestCase):
 
   def test_validate_config(self):
     config = {
-      'config': ""
+      'rucksack-config': {
+        'log-level': 'debug',
+        'illegal-parameter': 'fail the test'
+      }
     }
     self.assertRaises(ConfigParserException, validate_config, config)
 

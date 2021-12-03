@@ -1,4 +1,7 @@
 ---
+rucksack-config:
+  log-level: debug
+  log-file: .rucksack.log
 system:
   get-uptime:
     command: uptime
