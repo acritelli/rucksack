@@ -7,11 +7,15 @@ if __name__ == "__main__":
 
   parser = ArgumentParser()
   parser.add_argument('host')
+  parser.add_argument('--config-file',
+    help='Configuration file to be used (overrides default config file processing logic)',
+    default=None,
+    )
 
   args = parser.parse_args()
 
   try:
-    RucksackCli(args.host).start()
+    RucksackCli(args.host, config_file=args.config_file, ).start()
   except (KeyboardInterrupt, EOFError):
     # TODO: really this should be caught in the above class and then propagated so that we can close down the connection
     print('Goodbye!')

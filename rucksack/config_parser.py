@@ -111,8 +111,13 @@ def load_config_from_etc_file():
 ### 2. Search ~/.config/rucksack for yaml or yml files. Load all files.
 ### 3. Look for ~/.config/rucksack.[yml|yaml]
 ### 4. Search /etc/rucksack for yaml or yml files. Load all files.
-def load_config():
+def load_config(file=None):
   config = {}
+
+  # Attempt to load from a file if provided
+  if file:
+    config = load_config_from_file(file)
+    return config
 
   config = load_config_from_cwd()
   if config:
@@ -144,8 +149,8 @@ def validate_rucksack_config(config):
   if illegal_keys:
     raise ConfigParserException(f"Illegal keys found in rucksack-config: {illegal_keys}")
 
-def get_config():
-  config = load_config()
+def get_config(file=None):
+  config = load_config(file)
   if not config:
     raise ConfigNotFoundException("No valid configuration file found.")
   validate_config(config)

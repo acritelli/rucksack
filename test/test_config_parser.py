@@ -99,6 +99,12 @@ class TestConfigParser(unittest.TestCase):
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 
+  @patch('rucksack.config_parser.load_config_from_file', mock_return_config)
+  def test_load_config_from_specified_file(self):
+    config = load_config(file='test')
+    expected_config = yaml.safe_load(mock_config)
+    self.assertEqual(config, expected_config)
+
   def test_validate_config(self):
     config = {
       'rucksack-config': {
