@@ -29,10 +29,10 @@ def mock_find_config_files_in_directory(directory):
   elif directory == '/etc/rucksack':
     return ['/etc/rucksack/file1.yml', '/etc/rucksack/file2.yaml']
 
-def mock_return_config(file=None):
+def mock_return_config(file=None, directory=None):
   return yaml.safe_load(mock_config)
 
-def mock_return_empty(file=None):
+def mock_return_empty(file=None, directory=None):
   return {}
 
 
@@ -102,6 +102,12 @@ class TestConfigParser(unittest.TestCase):
   @patch('rucksack.config_parser.load_config_from_file', mock_return_config)
   def test_load_config_from_specified_file(self):
     config = load_config(file='test')
+    expected_config = yaml.safe_load(mock_config)
+    self.assertEqual(config, expected_config)
+
+  @patch('rucksack.config_parser.load_config_from_directory', mock_return_config)
+  def test_load_config_from_specified_directory(self):
+    config = load_config(directory='test')
     expected_config = yaml.safe_load(mock_config)
     self.assertEqual(config, expected_config)
 

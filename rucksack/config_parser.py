@@ -23,6 +23,25 @@ def load_config_from_file(file=None):
     logger.debug(f"Config loaded from file. Returning config: {config}")
     return config
 
+# TODO: utilize this function elsewhere and DRY out code
+def load_config_from_directory(directory):
+  logger.debug(f"Attempting to load config file from directory: {directory}")
+  config = {}
+  files = find_config_files_in_directory(directory)
+  if files:
+    logger.debug(f"Found config files in directory: {directory}")
+    for file in files:
+      try:
+        temp_dict = load_config_from_file(file)
+        for key in temp_dict.keys():
+          config[key] = temp_dict[key]
+      except OSError as e:
+        logger.debug(f"Unable to read config file {file}")
+        raise ConfigParserException(f"Unable to read config file {file}") from e
+    return config
+  else:
+    logger.debug(f"No config files found in {directory}") 
+
 def find_config_files_in_directory(directory=None):
   logger.debug(f"Attempting to find config files in directory {directory}")
   files = []
@@ -111,13 +130,17 @@ def load_config_from_etc_file():
 ### 2. Search ~/.config/rucksack for yaml or yml files. Load all files.
 ### 3. Look for ~/.config/rucksack.[yml|yaml]
 ### 4. Search /etc/rucksack for yaml or yml files. Load all files.
-def load_config(file=None):
+def load_config(file=None, directory=None):
   config = {}
 
-  # Attempt to load from a file if provided
+  # Attempt to load from a file or directory if provided
   if file:
     config = load_config_from_file(file)
     return config
+  if directory:
+    config = load_config_from_directory(directory)
+    return config
+  
 
   config = load_config_from_cwd()
   if config:
@@ -149,8 +172,8 @@ def validate_rucksack_config(config):
   if illegal_keys:
     raise ConfigParserException(f"Illegal keys found in rucksack-config: {illegal_keys}")
 
-def get_config(file=None):
-  config = load_config(file)
+def get_config(file=None, directory=None):
+  config = load_config(file, directory)
   if not config:
     raise ConfigNotFoundException("No valid configuration file found.")
   validate_config(config)

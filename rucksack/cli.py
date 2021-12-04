@@ -13,7 +13,7 @@ from rucksack.exceptions import ConfigNotFoundException, UnknownArgumentExceptio
 
 class RucksackCli():
 
-  def __init__(self, host, config_file=None):
+  def __init__(self, host, config_file=None, config_directory=None):
     self.host = host
     self.logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class RucksackCli():
     # TODO: read this only once and accept as an arg
     try:
       self.logger.debug('Attempting to get configuration')
-      self.config = get_config(config_file)
+      self.config = get_config(config_file, config_directory)
     except ConfigNotFoundException as e:
       print(e)
       quit(1)
