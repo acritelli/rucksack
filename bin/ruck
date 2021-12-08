@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from rucksack.cli import RucksackCli
+import logging
 
 if __name__ == "__main__":
 
@@ -15,8 +16,24 @@ if __name__ == "__main__":
     help='Configuration directory to be used (overrides default config search logic)',
     default=None
     )
+  parser.add_argument('--log-file',
+    help='File to send logs to. Logging is disabled by default. Set this flag to enable logging.',
+    default=None
+    )
+  parser.add_argument('--log-level',
+    help='Logging level. See Python logger docs for valid level names.',
+    default='INFO'
+  )
 
   args = parser.parse_args()
+
+  if args.log_file:
+    logger = logging.getLogger('rucksack')
+    logger.setLevel(logging.getLevelName(args.log_level.upper()))
+    handler = logging.FileHandler(args.log_file)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
   try:
     RucksackCli(args.host, config_file=args.config_file, config_directory=args.config_directory).start()
