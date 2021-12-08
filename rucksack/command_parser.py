@@ -161,9 +161,14 @@ def render_command(command_dictionary):
         try:
           # Get the template string if the arg was provided
           if command_dictionary['command_args'][arg_name]:
-            arg_template_string = arg[arg_name]['arg_string']
-            logger.debug(f"Found arg template string: {arg_template_string}")
-            template_string = f"{template_string} {arg_template_string}"
+            try:
+              # Check to see if the arg has a template string.
+              # If not, it must be part of the command string, so continue.
+              arg_template_string = arg[arg_name]['arg_string']
+              logger.debug(f"Found arg template string: {arg_template_string}")
+              template_string = f"{template_string} {arg_template_string}"
+            except KeyError:
+              continue
             continue
         except KeyError:
           # If the arg wasn't provided, then add the default to the command args dictionary
