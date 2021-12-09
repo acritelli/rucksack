@@ -167,6 +167,7 @@ def validate_config(config):
   return True
 
 def validate_rucksack_config(config):
+  # TODO: these are CLI args, so eliminate them from config
   allowed_keys = {'log-level', 'log-file'}
   illegal_keys = set(config.keys()) - allowed_keys
   if illegal_keys:
