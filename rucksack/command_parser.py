@@ -2,7 +2,7 @@ import logging
 from fabric import config
 from jinja2 import Environment
 from .config_parser import args_list_to_dictionary
-from .exceptions import MandatoryArgumentMissingException, UnknownArgumentException, UserWantsToQuitException
+from .exceptions import MandatoryArgumentMissingException, UnknownArgumentException, UserWantsToQuitException, ArgumentValueNotProvidedException
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +76,11 @@ def parse_command(requested_command, config):
         # in the dictionary
         if current_token in available_args.keys():
           logger.debug(f"'{current_token}' is a valid argument for this command")
-          argument_value = requested_command.pop(0).strip()
+          try:
+            argument_value = requested_command.pop(0).strip()
+          except IndexError:
+            logger.warning(f"No value provided for argument: {current_token}")
+            raise ArgumentValueNotProvidedException(f"No value provided for argument: {current_token}")
           command_arguments[current_token] = argument_value
           logger.debug(f"Adding '{argument_value}' as the value for the '{current_token}' argument")
         else:

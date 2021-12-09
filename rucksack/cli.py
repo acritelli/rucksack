@@ -8,7 +8,7 @@ from rucksack.completer import RucksackCompleter
 from rucksack.command_parser import parse_command, render_command
 from rucksack.connection import RucksackConnection
 from rucksack.config_parser import get_config
-from rucksack.exceptions import ConfigNotFoundException, UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
+from rucksack.exceptions import ArgumentValueNotProvidedException, ConfigNotFoundException, UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
 
 
 class RucksackCli():
@@ -74,7 +74,7 @@ class RucksackCli():
       try:
         command_string = parse_command(requested_command, self.config)
         self.logger.debug(f"Command parsed as {command_string}")
-      except UnknownArgumentException as e:
+      except (UnknownArgumentException, ArgumentValueNotProvidedException) as e:
           self.logger.debug('Command parsing failed')
           text = FormattedText([
               ('red', str(e)),
