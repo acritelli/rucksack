@@ -18,6 +18,7 @@ class RucksackCompleter(Completer):
 
   def get_completions(self, document, complete_event):
     args_dictionary = None
+    current_args = set()
     requested_command = document.text.split()
     self.logger.debug(f"Attempting to find completions for: {requested_command}")
 
@@ -42,16 +43,21 @@ class RucksackCompleter(Completer):
         self.logger.debug('Checking to see if args dictionary contains current term')
         # If the current term is in the args dictionary and has values, present those to the user
         try:
+          # Add this term to a set of current args so that we can avoid presenting
+          # duplicate args to the user
           current_dictionary = args_dictionary[current_term]
-          self.logger.debug('Term found in args dictionary')
+          self.logger.debug('Term found in args dictionary. Adding to current args set')
+          current_args.add(current_term)
+          # Ensure that current values to yield (which may be set from previous reference to args dict keys)
+          # has any current args removed
+          values_to_yield = set(values_to_yield) - current_args
         except KeyError:
           # If the current term isn't in the args dictionary, then default to giving the user
           # the list of args
-          # TODO: we should remove any args already provided
           self.logger.debug('Term not found in args dictionary.')
           if document.char_before_cursor == ' ':
-            self.logger.debug('Character before cusor is a space, yielding all args.')
-            values_to_yield = args_dictionary.keys()
+            self.logger.debug('Character before cursor is a space, yielding all args not yet provided.')
+            values_to_yield = set(args_dictionary.keys()) - current_args
             continue
           else:
             self.logger.debug('Non-space character before cursor, user must be typing an arg value.')
@@ -73,7 +79,7 @@ class RucksackCompleter(Completer):
       try:
         if not args_dictionary and current_dictionary['command']:
           args_dictionary = args_list_to_dictionary(current_dictionary['args'])
-          values_to_yield = args_dictionary
+          values_to_yield = set(args_dictionary) - current_args
           self.logger.debug(f"Current dictionary has a command string. Yielding args: {args_dictionary}")
       except KeyError:
         # A command may not have args
@@ -98,7 +104,7 @@ class RucksackCompleter(Completer):
 
     if not values_to_yield and args_dictionary:
       self.logger.debug('No values to yield. Yielding keys of arg dictionary.')
-      values_to_yield = args_dictionary.keys()
+      values_to_yield = set(args_dictionary.keys()) - current_args
 
     for value in values_to_yield:
       if value == 'command' or value == 'rucksack-config':
