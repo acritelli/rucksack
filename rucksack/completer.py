@@ -19,7 +19,6 @@ class RucksackCompleter(Completer):
   def get_completions(self, document, complete_event):
     args_dictionary = None
     requested_command = document.text.split()
-    
     self.logger.debug(f"Attempting to find completions for: {requested_command}")
 
     # TODO: consider tracking more state at the class level to reduce duplication.
@@ -49,9 +48,14 @@ class RucksackCompleter(Completer):
           # If the current term isn't in the args dictionary, then default to giving the user
           # the list of args
           # TODO: we should remove any args already provided
-          self.logger.debug('Term not found in args dictionary. Yielding all args instead.')
-          values_to_yield = args_dictionary.keys()
-          continue
+          self.logger.debug('Term not found in args dictionary.')
+          if document.char_before_cursor == ' ':
+            self.logger.debug('Character before cusor is a space, yielding all args.')
+            values_to_yield = args_dictionary.keys()
+            continue
+          else:
+            self.logger.debug('Non-space character before cursor, user must be typing an arg value.')
+            yield Completion("", start_position=0)
       else:
         # If we don't have an args_dictionary, then we haven't found the command yet. Keep
         # diving into the dictionary in an effort to find it.

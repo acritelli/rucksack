@@ -71,7 +71,7 @@ class TestCompleter(unittest.TestCase):
 
   def test_completion_with_bad_arg(self):
     completer = RucksackCompleter(yaml.load(mock_config, Loader=yaml.Loader), None)
-    document = Document("system tail-log somearg")
+    document = Document("system tail-log somearg ")
     yielded_completion = next(completer.get_completions(document, None))
     self.assertEqual(yielded_completion.text, "num_lines")
 
