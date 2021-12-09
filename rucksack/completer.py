@@ -1,6 +1,17 @@
 import logging
 from prompt_toolkit.completion import Completer, Completion
+from functools import lru_cache
 from .config_parser import args_list_to_dictionary
+
+logger = logging.getLogger(__name__)
+
+@lru_cache
+def get_args_from_command(connection, command):
+  # TODO: handle errors
+  logger.debug(f"Attempting to obtain arguments from command: {command}")
+  result = connection.execute_command(command)
+  logger.debug(f"Command result: {result}")
+  return result.stdout.splitlines()
 
 class RucksackCompleter(Completer):
 
@@ -8,13 +19,6 @@ class RucksackCompleter(Completer):
     self.logger = logging.getLogger(__name__)
     self.config = config
     self.connection = connection
-
-  def get_args_from_command(self, command):
-    # TODO: handle errors
-    self.logger.debug(f"Attempting to obtain arguments from command: {command}")
-    result = self.connection.execute_command(command)
-    self.logger.debug(f"Command result: {result}")
-    return result.stdout.splitlines()
 
   def get_completions(self, document, complete_event):
     args_dictionary = None
@@ -97,7 +101,7 @@ class RucksackCompleter(Completer):
       try:
         command_to_execute = current_dictionary['from_command']
         self.logger.debug('Current dictionary has from_command. Attempting to obtain args from command.')
-        values_to_yield = self.get_args_from_command(command_to_execute)
+        values_to_yield = get_args_from_command(self.connection, command_to_execute)
         self.logger.debug(f"Received args from command: {values_to_yield}")
       except KeyError:
         pass

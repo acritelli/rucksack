@@ -62,7 +62,7 @@ class RucksackCli():
 
     while True:
 
-      text = session.prompt(**self.set_prompt(command_error), completer=FuzzyCompleter(RucksackCompleter(self.config, self.conn)))
+      text = session.prompt(**self.set_prompt(command_error), completer=FuzzyCompleter(RucksackCompleter(self.config, self.conn)), complete_in_thread=True)
 
       requested_command = text.split()
       self.logger.debug(f"User entered requested command f{requested_command}")
