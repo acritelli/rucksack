@@ -9,6 +9,8 @@ from invoke.runners import Result
 
 mock_config = """
 ---
+rucksack-config:
+  somevalue: 'test'
 system:
   get-uptime:
     command: "uptime"
@@ -78,5 +80,11 @@ class TestCompleter(unittest.TestCase):
   def test_completion_with_bad_first_term(self):
     completer = RucksackCompleter(yaml.load(mock_config, Loader=yaml.Loader), None)
     document = Document("test")
+    yielded_completion = next(completer.get_completions(document, None))
+    self.assertEqual(yielded_completion.text, '')
+
+  def test_completion_with_user_typing_arg_value(self):
+    completer = RucksackCompleter(yaml.load(mock_config, Loader=yaml.Loader), None)
+    document = Document("system tail-log log_file /var/lo")
     yielded_completion = next(completer.get_completions(document, None))
     self.assertEqual(yielded_completion.text, '')
