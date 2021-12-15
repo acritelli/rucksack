@@ -7,9 +7,13 @@ class RucksackConnection():
     self.host = host
     self.logger = logging.getLogger(__name__)
     self.logger.debug(f"Attempting to open connection with hosts: {host}")
-    # TODO: handle localhost
     self.conn = Connection(host)
-    self.conn.open()
+
+    # Connections are lazy, so eagerly open the connection (as long as it isn't to localhost)
+    if host in ['localhost', '127.0.0.1']:
+      pass
+    else: 
+      self.conn.open()
     self.logger.debug(f"Opened connection with host {host}")
 
   def execute_command(self, command):
@@ -19,4 +23,7 @@ class RucksackConnection():
       self.logger.critical('Cannot execute command. Host connection has not yet been established.')
       raise Exception('No host defined yet')
 
-    return self.conn.run(command, warn=True, hide=True)
+    if self.host in ['localhost', '127.0.0.1']:
+        return self.conn.local(command, warn=True, hide=True)
+    else:
+      return self.conn.run(command, warn=True, hide=True)
