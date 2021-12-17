@@ -24,7 +24,7 @@ class RucksackCli():
       self.logger.debug('Attempting to get configuration')
       self.config = get_config(config_file, config_directory)
     except ConfigNotFoundException as e:
-      print(e)
+      print_formatted_text(e, file=sys.stderr)
       quit(1)
 
     self.logger.debug(f"Attempting to create a RucksackConnection to {host}")
@@ -79,10 +79,10 @@ class RucksackCli():
           text = FormattedText([
               ('red', str(e)),
           ])
-          print_formatted_text(text)
+          print_formatted_text(text, file=sys.stderr)
           continue 
       except UserWantsToQuitException:
-        print('Goodbye!')
+        print_formatted_text('Goodbye!', file=sys.stderr)
         quit()
 
       if command_string['command_string']:
@@ -93,17 +93,17 @@ class RucksackCli():
           text = FormattedText([
               ('red', str(e)),
           ])
-          print_formatted_text(text)
+          print_formatted_text(text, file=sys.stderr)
           continue
       else:
         text = FormattedText([
             ('red', 'No such command'),
         ])
 
-        print_formatted_text(text)
+        print_formatted_text(text, file=sys.stderr)
         continue
       self.logger.info(f"Attempting to run: {rendered_command}")
-      print(f"Attempting to run {rendered_command}")
+      print_formatted_text(f"Attempting to run {rendered_command}", file=sys.stderr)
       result = self.conn.execute_command(rendered_command)
 
       self.logger.debug(f"Command result: {result}")
@@ -113,11 +113,13 @@ class RucksackCli():
       else:
         command_error = False
 
-
-      text = FormattedText([
-          ('green', result.stdout),
-          ('', '\n'),
-          ('red', result.stderr),
+      stdout = FormattedText([
+        ('green', result.stdout)
       ])
 
-      print_formatted_text(text)
+      stderr = FormattedText([
+        ('red', result.stderr)
+      ])
+
+      print_formatted_text(stdout)
+      print_formatted_text(stderr, file=sys.stderr)
