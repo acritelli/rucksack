@@ -43,4 +43,10 @@ nginx:
       - log_file:
           mandatory: True
           from_command: "sudo find /var/log/nginx -name '*access.log*' | grep -v '.gz'"
+  get-top-5-verbs:
+    command: cat {{ log_file }} | grep -o '].*' | cut -f 2 -d ' '  | tr -d '"' | sort | uniq -c | sort -hr | head -n 5
+    args:
+      - log_file:
+          mandatory: True
+          from_command: "sudo find /var/log/nginx -name '*access.log*' | grep -v '.gz'"
 
