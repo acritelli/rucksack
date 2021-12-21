@@ -10,6 +10,8 @@ It was inspired by that `useful_stuff.txt` file that every SysAdmin has on their
 
 Rucksack allows you to store your one-liners (and their potential arguments) in a [YAML file](./rucksack.yml.example). You can then connect to a remote host (or localhost) and run those one-liners from one easy place. No more copying and pasting from a `useful_stuff.txt` file!
 
+Want to learn more? Head on over to the [tutorial](doc/tutorial.md) for more examples and to get started!
+
 ![Rucksack Demo](./doc/img/ruck_demo.gif)
 
 **Warning:** Rucksack is a very new project and is under heavy development. Things may change. I think I've got the config file syntax nailed down, but this is still an early project. Please file an issue if you come across a bug.
