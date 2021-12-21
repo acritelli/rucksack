@@ -1,8 +1,8 @@
 # Rucksack Tutorial
 
-This tutorial is designed to get you up and running with `rucksack`. It assumes that you've already got `rucksack` installed. If it's not installed yet, head over to the [README](../README.md) and install it before proceeding.
+This tutorial is designed to get you up and running with Rucksack. It assumes that you've already got Rucksack installed. If it's not installed yet, head over to the [README](../README.md) and install it before proceeding.
 
-By the end of this tutorial, you will understand how to write a `rucksack` config file.
+By the end of this tutorial, you will understand how to write a Rucksack config file.
 
 You will need access to a Linux host (either remote over SSH, or localhost).
 
@@ -21,7 +21,7 @@ system:
 
 Once you've got a `rucksack.yml`, fire up Rucksack: `ruck --host ${host or IP address}`
 
-Rucksack will connect to the remote host over SSH (unless you specify `localhost` or `127.0.0.1`) and you can start using it to execute your basic command:s
+Rucksack will connect to the remote host over SSH (unless you specify `localhost` or `127.0.0.1`) and you can start using it to execute your basic command:
 
 ![system performance get-basic-info](img/tutorial/tutorial_1.gif)
 
@@ -111,6 +111,6 @@ Be aware that command output is cached, so this approach might not be appropriat
 
 ## Wrapping up
 
-If you've made it this far, you have a good idea of how to write a `rucksack` config file. Congratulations! Next time you come across a useful one-liner, throw it into a `rucksack` config and save your brain the trouble of memorizing it.
+If you've made it this far, you have a good idea of how to write a Rucksack config file. Congratulations! Next time you come across a useful one-liner, throw it into a Rucksack config and save your brain the trouble of memorizing it.
 
-This is pretty much all there is to `rucksack`. Feel free to review the [README](../README.md) for additional info, such as where to put your config files, or how to enable logging. And of course, feel free to open an issue (or a PR) if you find any problems.
+This is pretty much all there is to Rucksack. Feel free to review the [README](../README.md) for additional info, such as where to put your config files, or how to enable logging. And of course, feel free to open an issue (or a PR) if you find any problems.

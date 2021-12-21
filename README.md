@@ -1,4 +1,6 @@
-# rucksack: A place to store your useful one liners
+# Rucksack 
+
+*A place to store your useful one-liners*
 
 ## Overview
 
@@ -6,11 +8,11 @@ Rucksack is an interactive command runner that provides useful auto-completion c
 
 It was inspired by that `useful_stuff.txt` file that every SysAdmin has on their desktop. You know the one: you come up with a clever one-liner, and you throw it in there so that you can reuse it someday.
 
-Rucksack allows you to store your one-liners (and their potential arguments) in a [YAML file](./rucksack.yml). You can then connect to a remote host (or localhost) and run those one-liners from one easy place. No more copying and pasting from a `useful_stuff.txt` file!
+Rucksack allows you to store your one-liners (and their potential arguments) in a [YAML file](./rucksack.yml.example). You can then connect to a remote host (or localhost) and run those one-liners from one easy place. No more copying and pasting from a `useful_stuff.txt` file!
 
 ![Rucksack Demo](./doc/img/ruck_demo.gif)
 
-**Warning:** Rucksack is a very new project and is under heavy development. Please file an issue if you come across a bug.
+**Warning:** Rucksack is a very new project and is under heavy development. Things may change. I think I've got the config file syntax nailed down, but this is still an early project. Please file an issue if you come across a bug.
 
 ## Installing
 
@@ -28,7 +30,7 @@ Rucksack has a help page. Simply run `ruck -h` to see all options.
 
 In general, you simply need to specify `--host ${hostname}` so that Rucksack can connect to a remote host. If you specify `localhost` or `127.0.0.1`, Rucksack will not attempt to connect via SSH and will simply shell out local commands.
 
-Once you launch `rucksack`, you will be taken to a prompt. From there, you can run any commands you have defined in your configuration. To quit, simply enter the `quit` command.
+Once you launch Rucksack, you will be taken to a prompt. From there, you can run any commands you have defined in your configuration. To quit, simply enter the `quit` command.
 
 ## Configuring
 
@@ -37,7 +39,7 @@ Rucksack uses a simple YAML configuration file (or multiple YAML files) for its 
 ### Config File Location
 
 Rucksack is configured via one or more YAML files. You can specify a configuration file or directory at the command line, or you can let Rucksack search for one in the following order
-* A `rucksack.yml` or `rucksack.yaml`
+* A `rucksack.yml` or `rucksack.yaml` in the local directory
 * Any `.yml` or `.yaml` files in your home directory at `~/.config/` (e.g., `/home/tony/.config/rucksack/config.yml`)
 * Any `.yml` or `.yaml` files in `/etc/rucksack/` (e.g., `/etc/rucksack/config.yml`)
 * An `/etc/rucksack.yml` or `/etc/rucksack.yaml` file
@@ -46,9 +48,11 @@ Rucksack will process the above list **in order** and will stop once it has load
 
 ### Config File Syntax
 
-The best way to get up and running with `rucksack` configuration is to follow the [tutorial](doc/tutorial.md). If you're interested in the logistics of a `rucksack` config, then feel free to read on. However, reading the tutorial is **strongly encouraged**, as it will take you through concrete examples.
+The best way to get up and running with Rucksack configuration is to follow the [tutorial](doc/tutorial.md). If you're interested in the logistics of a Rucksack config, then feel free to read on. However, reading the tutorial is **strongly encouraged**, as it will take you through concrete examples.
 
-The basic unit of configuration in `rucksack` is a YAML dictionary with a `command` key:
+For the purposes of [Semantic Versioning](https://semver.org/), the config file format is the "public API."
+
+The basic unit of configuration in Rucksack is a YAML dictionary with a `command` key:
 
 ```yaml
 get-uptime:
@@ -117,6 +121,15 @@ nginx:
           mandatory: True
           from_command: "sudo find /var/log/nginx -name '*access.log*' | grep -v '.gz'"
 ```
+
+# Caveats and Known Issues
+
+There are currently a few caveats to using Rucksack (please file an issue if you find more):
+
+* Password entry via a `sudo` prompt isn't really supported. It will work, but it won't be pretty. It's expected that the remote user has permissions to execute any commands used by Rucksack (or that they can use passwordless `sudo`).
+* The `from_command` directive is naive, and it will ignore any errors. For example: imagine that the `find` command in the above config is broken. Rucksack will simply ignore this and won't present any values to the user for the auto-completion
+* Config file validation isn't currently implemented, so you may get unexpected results (such as exceptions thrown when exiting) if your config file is broken.
+* Config file parsing, auto-completion, and command rendering almost certainly are not as efficient as they could be (lots of looping over dictionary keys or arrays). Optimizations will come with time.
 
 # Credits
 
