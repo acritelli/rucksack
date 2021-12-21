@@ -18,10 +18,6 @@ class RucksackConnection():
 
   def execute_command(self, command):
     self.logger.debug(f"Attempting to execute command: {command}")
-    if not self.conn:
-      # TODO: custom exception
-      self.logger.critical('Cannot execute command. Host connection has not yet been established.')
-      raise Exception('No host defined yet')
 
     if self.host in ['localhost', '127.0.0.1']:
         return self.conn.local(command, warn=True, hide=True)
