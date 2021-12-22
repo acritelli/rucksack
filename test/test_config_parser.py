@@ -1,7 +1,5 @@
-import os
 import unittest
-from unittest import mock
-from unittest.case import expectedFailure
+from fabric.config import Config
 import yaml
 from pathlib import Path
 from rucksack.config_parser import *
@@ -29,10 +27,14 @@ def mock_find_config_files_in_directory(directory):
   elif directory == '/etc/rucksack':
     return ['/etc/rucksack/file1.yml', '/etc/rucksack/file2.yaml']
 
-def mock_return_config(file=None, directory=None):
+def mock_return_config(*args, **kwargs):
   return yaml.safe_load(mock_config)
 
-def mock_return_empty(file=None, directory=None):
+def mock_raise_oserror(*args, **kwargs):
+  raise OSError('Unable to read config file')
+
+
+def mock_return_empty(*args, **kwargs):
   return {}
 
 
@@ -134,3 +136,17 @@ class TestConfigParser(unittest.TestCase):
   @patch('rucksack.config_parser.load_config', mock_return_empty)
   def test_get_config_config_not_found(self):
     self.assertRaises(ConfigNotFoundException, get_config)
+
+  @patch('rucksack.config_parser.find_config_files_in_directory', mock_find_config_files_in_directory)
+  @patch('rucksack.config_parser.load_config_from_file', mock_return_config)
+  def test_load_config_from_directory(self):
+    config = load_config_from_directory('/etc/rucksack')
+    self.assertEqual(config, yaml.safe_load(mock_config))
+
+    config = load_config_from_directory('/bad/directory')
+    self.assertEqual(config, None)
+
+  @patch('rucksack.config_parser.find_config_files_in_directory', mock_find_config_files_in_directory)
+  @patch('rucksack.config_parser.load_config_from_file', mock_raise_oserror)
+  def test_load_config_from_directory_exception(self):
+    self.assertRaises(ConfigParserException, load_config_from_directory, '/etc/rucksack')
