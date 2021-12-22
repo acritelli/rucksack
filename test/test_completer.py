@@ -1,5 +1,3 @@
-from sys import stdout
-from unittest import mock
 import unittest
 import yaml
 from rucksack.completer import *
