@@ -3,6 +3,9 @@
 from argparse import ArgumentParser
 from rucksack.cli import RucksackCli
 import logging
+import sys
+
+from rucksack.exceptions import ConfigNotFoundException, UserWantsToQuitException
 
 if __name__ == "__main__":
 
@@ -40,7 +43,10 @@ if __name__ == "__main__":
 
   try:
     RucksackCli(args.host, config_file=args.config_file, config_directory=args.config_directory).start()
-  except (KeyboardInterrupt, EOFError):
+  except ConfigNotFoundException as e:
+    print(e, file=sys.stderr)
+    quit(1)
+  except (KeyboardInterrupt, EOFError, UserWantsToQuitException):
     # TODO: really this should be caught in the above class and then propagated so that we can close down the connection
     print('Goodbye!')
     quit()

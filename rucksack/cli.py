@@ -19,13 +19,8 @@ class RucksackCli():
 
     self.logger.debug('Creating new RucksackCLI')
 
-    # TODO: read this only once and accept as an arg
-    try:
-      self.logger.debug('Attempting to get configuration')
-      self.config = get_config(config_file, config_directory)
-    except ConfigNotFoundException as e:
-      print_formatted_text(e, file=sys.stderr)
-      quit(1)
+    self.logger.debug('Attempting to get configuration')
+    self.config = get_config(config_file, config_directory)
 
     self.logger.debug(f"Attempting to create a RucksackConnection to {host}")
     self.conn = RucksackConnection(self.host)
@@ -80,10 +75,7 @@ class RucksackCli():
               ('red', str(e)),
           ])
           print_formatted_text(text, file=sys.stderr)
-          continue 
-      except UserWantsToQuitException:
-        print_formatted_text('Goodbye!', file=sys.stderr)
-        quit()
+          continue
 
       if command_string['command_string']:
         try:
