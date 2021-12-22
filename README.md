@@ -132,6 +132,7 @@ There are currently a few caveats to using Rucksack (please file an issue if you
 * The `from_command` directive is naive, and it will ignore any errors. For example: imagine that the `find` command in the above config is broken. Rucksack will simply ignore this and won't present any values to the user for the auto-completion
 * Config file validation isn't currently implemented, so you may get unexpected results (such as exceptions thrown when exiting) if your config file is broken.
 * Config file parsing, auto-completion, and command rendering almost certainly are not as efficient as they could be (lots of looping over dictionary keys or arrays). Optimizations will come with time.
+* Tests and test logic could use a lot of cleanup and rework
 
 # Credits
 
