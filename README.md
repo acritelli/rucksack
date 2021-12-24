@@ -1,6 +1,6 @@
-# Rucksack 
+![Rucksack Logo](doc/img/rucksack_logo.png)
 
-*A place to store your useful one-liners*
+# *A place to store your useful one-liners*
 
 ## Overview
 
@@ -135,6 +135,8 @@ There are currently a few caveats to using Rucksack (please file an issue if you
 * Tests and test logic could use a lot of cleanup and rework
 
 # Credits
+
+Thanks to my very talented wife, [Megan Critelli](https://www.instagram.com/fritts.studio/), who designed the Rucksack logo. She does commissions and sells prints.
 
 Rucksack stands on the shoulders of some giant projects that made it easy to construct. Special thanks to the following projects for such great Python tools. If you enjoy Rucksack, please consider supporting these projects.
 
