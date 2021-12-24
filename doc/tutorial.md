@@ -1,6 +1,6 @@
 # Rucksack Tutorial
 
-This tutorial is designed to get you up and running with Rucksack. It assumes that you've already got Rucksack installed. If it's not installed yet, head over to the [README](../README.md) and install it before proceeding.
+This tutorial is designed to get you up and running with Rucksack. It assumes that you've already got Rucksack installed. If it's not installed yet, head over to the [README](../README.md) and install it before proceeding (or just run `pip install rucksack`).
 
 By the end of this tutorial, you will understand how to write a Rucksack config file.
 
