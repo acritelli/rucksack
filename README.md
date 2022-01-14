@@ -4,7 +4,7 @@
 
 ## Overview
 
-Rucksack is an interactive command runner that provides useful auto-completion capabilities for those hard to remember one-liners that we all have. It provides a way for you to run your one-liners againt remote systems, complete with any needed arguments (templated out via Jinja2), without having to remember them.
+Rucksack is an interactive command runner that provides useful auto-completion capabilities for those hard to remember one-liners that we all have. It provides a way for you to run your one-liners against remote systems, complete with any needed arguments (templated out via Jinja2), without having to remember them.
 
 It was inspired by that `useful_stuff.txt` file that every SysAdmin has on their desktop. You know the one: you come up with a clever one-liner, and you throw it in there so that you can reuse it someday.
 
@@ -13,6 +13,8 @@ Rucksack allows you to store your one-liners (and their potential arguments) in 
 Want to learn more? Head on over to the [tutorial](doc/tutorial.md) for more examples and to get started!
 
 ![Rucksack Demo](./doc/img/ruck_demo.gif)
+
+☕ If you like Rucksack, consider [buying me a coffee](https://www.buymeacoffee.com/acritelli).
 
 **Warning:** Rucksack is a very new project and is under heavy development. Things may change. I think I've got the config file syntax nailed down, but this is still an early project. Please file an issue if you come across a bug.
 
