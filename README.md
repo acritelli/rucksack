@@ -14,6 +14,8 @@ Want to learn more? Head on over to the [tutorial](doc/tutorial.md) for more exa
 
 ![Rucksack Demo](./doc/img/ruck_demo.gif)
 
+☕ If you like Rucksack, consider [buying me a coffee](https://www.buymeacoffee.com/acritelli).
+
 **Warning:** Rucksack is a very new project and is under heavy development. Things may change. I think I've got the config file syntax nailed down, but this is still an early project. Please file an issue if you come across a bug.
 
 ## Installing
