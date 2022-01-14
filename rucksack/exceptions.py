@@ -15,3 +15,12 @@ class ArgumentValueNotProvidedException(Exception):
 
 class ConfigNotFoundException(Exception):
   pass
+
+class NoCommandEnteredException(Exception):
+  pass
+
+class CommandParsingFailedException(Exception):
+  pass
+
+class UnknownCommandException(Exception):
+  pass
