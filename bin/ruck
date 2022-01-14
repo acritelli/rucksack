@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from rucksack.cli import RucksackCli
+from rucksack.exceptions import *
 import logging
 import sys
 
@@ -30,6 +31,7 @@ if __name__ == "__main__":
     help='Logging level. See Python logger docs for valid level names.',
     default='INFO'
   )
+  parser.add_argument('rucksack_arg', nargs='*')
 
   args = parser.parse_args()
 
@@ -41,8 +43,17 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
+  cli = RucksackCli(args.host, config_file=args.config_file, config_directory=args.config_directory)
+
+  if args.rucksack_arg:
+    try:
+      cli.handle_command(args.rucksack_arg)
+      quit()
+    except (NoCommandEnteredException, CommandParsingFailedException, MandatoryArgumentMissingException, UnknownCommandException):
+      quit(1)
+
   try:
-    RucksackCli(args.host, config_file=args.config_file, config_directory=args.config_directory).start()
+    cli.start()
   except ConfigNotFoundException as e:
     print(e, file=sys.stderr)
     quit(1)
