@@ -44,7 +44,7 @@ Rucksack uses a simple YAML configuration file (or multiple YAML files) for its 
 
 Rucksack is configured via one or more YAML files. You can specify a configuration file or directory at the command line, or you can let Rucksack search for one in the following order
 * A `rucksack.yml` or `rucksack.yaml` in the local directory
-* Any `.yml` or `.yaml` files in your home directory at `~/.config/` (e.g., `/home/tony/.config/rucksack/config.yml`)
+* Any `.yml` or `.yaml` files in your home directory at `~/.config/rucksack/` (e.g., `/home/tony/.config/rucksack/config.yml`)
 * Any `.yml` or `.yaml` files in `/etc/rucksack/` (e.g., `/etc/rucksack/config.yml`)
 * An `/etc/rucksack.yml` or `/etc/rucksack.yaml` file
 
