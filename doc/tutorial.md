@@ -19,7 +19,7 @@ system:
       command: "uptime && echo && free -h && echo && df -h"
 ```
 
-Once you've got a `rucksack.yml`, fire up Rucksack: `ruck --host ${host or IP address}`
+Once you've got a `rucksack.yml`, fire up Rucksack: `ruck --host ${host or IP address}` (if no `--host` is specified, then Rucksack will use `localhost` by default).
 
 Rucksack will connect to the remote host over SSH (unless you specify `localhost` or `127.0.0.1`) and you can start using it to execute your basic command:
 

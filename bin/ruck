@@ -12,11 +12,11 @@ if __name__ == "__main__":
   parser = ArgumentParser()
   parser.add_argument('--host',
     help='Host to connect to',
-    required=True
+    default='localhost'
     )
   parser.add_argument('--config-file',
     help='Configuration file to be used (overrides default config search logic)',
-    default=None,
+    default=None
     )
   parser.add_argument('--config-directory',
     help='Configuration directory to be used (overrides default config search logic)',
