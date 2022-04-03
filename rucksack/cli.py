@@ -8,7 +8,7 @@ from rucksack.completer import RucksackCompleter
 from rucksack.command_parser import parse_command, render_command
 from rucksack.connection import RucksackConnection
 from rucksack.config_parser import get_config
-from rucksack.exceptions import ArgumentValueNotProvidedException, ConfigNotFoundException, UnknownArgumentException, UserWantsToQuitException, MandatoryArgumentMissingException
+from rucksack.exceptions import *
 
 
 class RucksackCli():
@@ -49,6 +49,67 @@ class RucksackCli():
       "style": style
     }
 
+  def handle_command(self, requested_command):
+  
+    self.logger.debug(f"User entered requested command f{requested_command}")
+
+    if not requested_command:
+      self.logger.debug('User did not enter a command')
+      raise NoCommandEnteredException
+
+    try:
+      command_string = parse_command(requested_command, self.config)
+      self.logger.debug(f"Command parsed as {command_string}")
+    except (UnknownArgumentException, ArgumentValueNotProvidedException) as e:
+        self.logger.debug('Command parsing failed')
+        text = FormattedText([
+            ('red', str(e)),
+        ])
+        print_formatted_text(text, file=sys.stderr)
+        raise CommandParsingFailedException
+
+    if command_string['command_string']:
+      try:
+        rendered_command = render_command(command_string)
+        self.logger.debug(f"Command rendered as: {rendered_command}")
+      except MandatoryArgumentMissingException as e:
+        text = FormattedText([
+            ('red', str(e)),
+        ])
+        print_formatted_text(text, file=sys.stderr)
+        raise e
+    else:
+      text = FormattedText([
+          ('red', 'No such command'),
+      ])
+
+      print_formatted_text(text, file=sys.stderr)
+      raise UnknownCommandException
+    self.logger.info(f"Attempting to run: {rendered_command}")
+    print_formatted_text(f"Attempting to run {rendered_command}", file=sys.stderr)
+    result = self.conn.execute_command(rendered_command)
+
+    self.logger.debug(f"Command result: {result}")
+
+    if result.stderr:
+      command_error = True
+    else:
+      command_error = False
+
+    stdout = FormattedText([
+      ('green', result.stdout)
+    ])
+
+    stderr = FormattedText([
+      ('red', result.stderr)
+    ])
+
+    print_formatted_text(stdout)
+    print_formatted_text(stderr, file=sys.stderr)
+
+    return command_error
+
+
   def start(self):
 
     session = PromptSession()
@@ -62,56 +123,7 @@ class RucksackCli():
       requested_command = text.split()
       self.logger.debug(f"User entered requested command f{requested_command}")
 
-      if not requested_command:
-        self.logger.debug('User did not enter a command')
-        continue
-
       try:
-        command_string = parse_command(requested_command, self.config)
-        self.logger.debug(f"Command parsed as {command_string}")
-      except (UnknownArgumentException, ArgumentValueNotProvidedException) as e:
-          self.logger.debug('Command parsing failed')
-          text = FormattedText([
-              ('red', str(e)),
-          ])
-          print_formatted_text(text, file=sys.stderr)
-          continue
-
-      if command_string['command_string']:
-        try:
-          rendered_command = render_command(command_string)
-          self.logger.debug(f"Command rendered as: {rendered_command}")
-        except MandatoryArgumentMissingException as e:
-          text = FormattedText([
-              ('red', str(e)),
-          ])
-          print_formatted_text(text, file=sys.stderr)
-          continue
-      else:
-        text = FormattedText([
-            ('red', 'No such command'),
-        ])
-
-        print_formatted_text(text, file=sys.stderr)
+        self.handle_command(requested_command)
+      except (NoCommandEnteredException, CommandParsingFailedException, MandatoryArgumentMissingException, UnknownCommandException):
         continue
-      self.logger.info(f"Attempting to run: {rendered_command}")
-      print_formatted_text(f"Attempting to run {rendered_command}", file=sys.stderr)
-      result = self.conn.execute_command(rendered_command)
-
-      self.logger.debug(f"Command result: {result}")
-
-      if result.stderr:
-        command_error = True
-      else:
-        command_error = False
-
-      stdout = FormattedText([
-        ('green', result.stdout)
-      ])
-
-      stderr = FormattedText([
-        ('red', result.stderr)
-      ])
-
-      print_formatted_text(stdout)
-      print_formatted_text(stderr, file=sys.stderr)
