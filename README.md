@@ -32,7 +32,7 @@ The installation will add the `ruck` command to your path.
 
 Rucksack has a help page. Simply run `ruck -h` to see all options.
 
-In general, you simply need to specify `--host ${hostname}` so that Rucksack can connect to a remote host. If you specify `localhost` or `127.0.0.1`, Rucksack will not attempt to connect via SSH and will simply shell out local commands.
+In general, you simply need to specify `--host ${hostname}` so that Rucksack can connect to a remote host. If you specify `localhost` or `127.0.0.1`, Rucksack will not attempt to connect via SSH and will simply shell out local commands. If you do not specify any host, then Rucksack will default to `localhost`.
 
 Once you launch Rucksack, you will be taken to a prompt. From there, you can run any commands you have defined in your configuration. To quit, simply enter the `quit` command.
 
